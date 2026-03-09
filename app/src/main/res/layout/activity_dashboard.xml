@@ -15,7 +15,7 @@
             android:id="@+id/tvGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello, Nicolas!"
+            android:text="Hello!"
             android:textColor="#FFCC3F"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -28,6 +28,8 @@
             android:layout_height="55dp"
             android:padding="2dp"
             android:src="@drawable/ic_launcher_background"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/CircleImage"
@@ -43,6 +45,8 @@
             android:elevation="4dp"
             android:gravity="center_vertical"
             android:paddingStart="15dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvGreeting">
@@ -88,9 +92,10 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/tvTripDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="15 min"
+                    android:text="--"
                     android:textColor="#FFCC3F"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -134,9 +139,9 @@
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"
                         android:max="100"
-                        android:progress="75"
+                        android:progress="0"
                         android:progressDrawable="@drawable/circular_progress_bar" />
 
                     <LinearLayout
@@ -145,7 +150,16 @@
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5" android:textColor="#FFCC3F" android:textSize="22sp" android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvFuelEfficiency"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#FFCC3F"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Km/L" android:textColor="#FFCC3F" android:textSize="10sp" />
                     </LinearLayout>
 
@@ -178,9 +192,9 @@
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_centerHorizontal="true"
+                        android:layout_centerInParent="true"
                         android:max="100"
-                        android:progress="40"
+                        android:progress="0"
                         android:progressDrawable="@drawable/circular_progress_bar" />
 
                     <LinearLayout
@@ -189,7 +203,14 @@
                         android:layout_centerInParent="true"
                         android:gravity="center"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="15" android:textColor="#FFCC3F" android:textSize="22sp" android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvTimeEst"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textColor="#FFCC3F"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="mins" android:textColor="#FFCC3F" android:textSize="10sp" />
                     </LinearLayout>
 
@@ -216,6 +237,20 @@
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/statsLayout" />
+
+        <TextView
+            android:id="@+id/btnViewAllLogs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View All"
+            android:textColor="#FFCC3F"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintBottom_toBottomOf="@+id/tvRecentLogsLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvRecentLogsLabel" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLogs"

@@ -1,4 +1,4 @@
-package com.example.loom_group_2;
+package com.example.loom_group_2.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,15 +6,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.loom_group_2.R;
+import com.example.loom_group_2.data.TripLog;
 import java.util.List;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
-
     private List<TripLog> logList;
-
-    public LogAdapter(List<TripLog> logList) {
-        this.logList = logList;
-    }
+    public LogAdapter(List<TripLog> logList) { this.logList = logList; }
 
     @NonNull
     @Override
@@ -33,13 +31,10 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     }
 
     @Override
-    public int getItemCount() {
-        return logList.size();
-    }
+    public int getItemCount() { return logList.size(); }
 
     public static class LogViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate, tvTitle, tvTime, tvFuel;
-
         public LogViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tvDate);
