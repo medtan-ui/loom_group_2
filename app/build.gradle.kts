@@ -47,6 +47,7 @@ dependencies {
     
     // Room
     implementation(libs.room.runtime)
+    implementation(libs.firebase.firestore)
     annotationProcessor(libs.room.compiler)
     
     testImplementation(libs.junit)

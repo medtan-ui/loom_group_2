@@ -1,7 +1,6 @@
 package com.example.loom_group_2.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -11,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.loom_group_2.R;
+import com.example.loom_group_2.data.FirebaseUtil;
+import com.example.loom_group_2.data.Motorcycle;
 import com.example.loom_group_2.data.TripLog;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.MockRouteService;
@@ -19,7 +20,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,6 +39,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private LinearLayout searchBar;
     private ShapeableImageView ivProfile;
     private TextView btnViewAllLogs;
+    private Motorcycle currentVehicle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         setupRecyclerView();
         updateGreeting();
         loadRecentLogs();
+        loadUserVehicle();
         
         searchBar.setOnClickListener(v -> simulateNewRoute());
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
@@ -69,6 +71,15 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         if (mapFragment != null) mapFragment.getMapAsync(this);
+    }
+
+    private void loadUserVehicle() {
+        FirebaseUtil.getUserVehicle(motorcycle -> {
+            if (motorcycle != null) {
+                this.currentVehicle = motorcycle;
+                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl_city()));
+            }
+        });
     }
 
     private void setupRecyclerView() {
@@ -86,20 +97,27 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void simulateNewRoute() {
+        if (currentVehicle == null) {
+            Toast.makeText(this, "Please select a vehicle in Profile first!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         Toast.makeText(this, "Calculating route...", Toast.LENGTH_SHORT).show();
         MockRouteService.calculateRoute("A", "B", (distanceKm, durationMins, fuelEstimateLiters) -> {
             runOnUiThread(() -> {
-                // Update UI Stats
-                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", 12.5)); // Dummy efficiency
+                // Use actual vehicle data for more accurate dummy calculation
+                double realFuelNeeded = distanceKm / currentVehicle.getKpl_city();
+                
+                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl_city()));
                 tvTimeEst.setText(String.valueOf(durationMins));
                 tvTripDuration.setText(durationMins + " min");
                 
-                progressFuel.setProgress(75); // Dummy progress
+                progressFuel.setProgress((int) Math.min(100, (realFuelNeeded * 10))); 
                 progressTime.setProgress(durationMins > 100 ? 100 : durationMins);
                 
-                // Save to Data Tier
                 String date = java.text.DateFormat.getDateInstance().format(new java.util.Date());
-                TripLog newLog = new TripLog(date, "Home to Campus", durationMins + " mins", String.format(Locale.US, "%.1f L", fuelEstimateLiters));
+                TripLog newLog = new TripLog(date, "Trip with " + currentVehicle.getModel(), 
+                        durationMins + " mins", String.format(Locale.US, "%.2f L", realFuelNeeded));
                 dataController.addTripLog(newLog, this::loadRecentLogs);
             });
         });
@@ -108,7 +126,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private void loadRecentLogs() {
         dataController.getAllTripLogs(logs -> runOnUiThread(() -> {
             tripLogs.clear();
-            // Show only the 3 most recent logs on dashboard
             if (logs.size() > 3) {
                 tripLogs.addAll(logs.subList(0, 3));
             } else {
@@ -122,5 +139,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(14.6253, 121.0619), 15f));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserVehicle(); // Refresh if they changed vehicle in Profile
     }
 }
