@@ -24,7 +24,7 @@ public class LogsActivity extends AppCompatActivity {
 
         ImageButton btnBack = findViewById(R.id.btnBackLogs);
         rvAllLogs = findViewById(R.id.rvAllLogs);
-        dataController = new DataPersistenceController(this);
+        dataController = DataPersistenceController.getInstance(this);
 
         btnBack.setOnClickListener(v -> finish());
 

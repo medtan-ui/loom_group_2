@@ -50,16 +50,16 @@ public class FirebaseUtil {
     public static void getYears(String make, String model, DataCallback<List<String>> callback) {
         db.collection("makes").document(make).collection("models").document(model)
                 .collection("years").get().addOnCompleteListener(task -> {
-                    List<String> years = new ArrayList<>();
+                    List<String> yearIds = new ArrayList<>();
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (DocumentSnapshot doc : task.getResult()) {
-                            // We return the document ID (e.g., "2023_Manual") so the app can fetch it correctly later
-                            years.add(doc.getId());
+                            // Returns the yearId (e.g., "2023_Manual")
+                            yearIds.add(doc.getId());
                         }
                     } else {
                         Log.e(TAG, "Error fetching years", task.getException());
                     }
-                    callback.onCallback(years);
+                    callback.onCallback(yearIds);
                 });
     }
 

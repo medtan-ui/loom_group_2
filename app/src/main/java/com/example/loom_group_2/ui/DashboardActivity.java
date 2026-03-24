@@ -47,7 +47,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         setContentView(R.layout.activity_dashboard);
         
         mAuth = FirebaseAuth.getInstance();
-        dataController = new DataPersistenceController(this);
+        dataController = DataPersistenceController.getInstance(this);
         
         tvGreeting = findViewById(R.id.tvGreeting);
         tvFuelEfficiency = findViewById(R.id.tvFuelEfficiency);
@@ -77,7 +77,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUtil.getUserVehicle(motorcycle -> {
             if (motorcycle != null) {
                 this.currentVehicle = motorcycle;
-                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl_city()));
+                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
             }
         });
     }
@@ -106,9 +106,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         MockRouteService.calculateRoute("A", "B", (distanceKm, durationMins, fuelEstimateLiters) -> {
             runOnUiThread(() -> {
                 // Use actual vehicle data for more accurate dummy calculation
-                double realFuelNeeded = distanceKm / currentVehicle.getKpl_city();
+                double realFuelNeeded = distanceKm / currentVehicle.getKpl();
                 
-                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl_city()));
+                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl()));
                 tvTimeEst.setText(String.valueOf(durationMins));
                 tvTripDuration.setText(durationMins + " min");
                 

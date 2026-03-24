@@ -9,13 +9,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DataPersistenceController {
-    private TripDao tripDao;
-    private ExecutorService executorService;
+    private static DataPersistenceController instance;
+    private final TripDao tripDao;
+    private final ExecutorService executorService;
 
-    public DataPersistenceController(Context context) {
+    private DataPersistenceController(Context context) {
         AppDatabase db = AppDatabase.getInstance(context);
         this.tripDao = db.tripDao();
-        this.executorService = Executors.newSingleThreadExecutor();
+        // Use a fixed pool to handle concurrent DB requests better
+        this.executorService = Executors.newFixedThreadPool(2);
+    }
+
+    public static synchronized DataPersistenceController getInstance(Context context) {
+        if (instance == null) {
+            instance = new DataPersistenceController(context.getApplicationContext());
+        }
+        return instance;
     }
 
     public void addTripLog(TripLog log, Runnable callback) {

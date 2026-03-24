@@ -3,7 +3,6 @@ package com.example.loom_group_2.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -59,13 +58,18 @@ public class ProfileActivity extends AppCompatActivity {
     private void loadUserVehicle() {
         FirebaseUtil.getUserVehicle(motorcycle -> {
             if (motorcycle != null) {
-                tvCurrentVehicle.setText(motorcycle.getYear() + " " + motorcycle.getMake() + " " + motorcycle.getModel());
+                String vehicleInfo = motorcycle.getYear() + " " + motorcycle.getMake() + " " + motorcycle.getModel();
+                tvCurrentVehicle.setText(vehicleInfo);
             }
         });
     }
 
     private void showMakeSelection() {
         FirebaseUtil.getMakes(makes -> {
+            if (makes.isEmpty()) {
+                Toast.makeText(this, "No vehicles found in database", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String[] items = makes.toArray(new String[0]);
             new AlertDialog.Builder(this)
                     .setTitle("Select Make")
@@ -85,21 +89,28 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void showYearSelection(String make, String model) {
-        FirebaseUtil.getYears(make, model, years -> {
-            String[] items = years.toArray(new String[0]);
+        FirebaseUtil.getYears(make, model, yearIds -> {
+            String[] items = yearIds.toArray(new String[0]);
+            // Format labels for display (e.g. "2023_Manual" -> "2023 (Manual)")
+            String[] labels = new String[items.length];
+            for (int i = 0; i < items.length; i++) {
+                labels[i] = items[i].replace("_", " (") + ")";
+            }
+
             new AlertDialog.Builder(this)
-                    .setTitle("Select Year")
-                    .setItems(items, (dialog, which) -> fetchAndSaveVehicle(make, model, items[which]))
+                    .setTitle("Select Year & Transmission")
+                    .setItems(labels, (dialog, which) -> fetchAndSaveVehicle(make, model, items[which]))
                     .show();
         });
     }
 
-    private void fetchAndSaveVehicle(String make, String model, String year) {
-        FirebaseUtil.getMotorcycleDetails(make, model, year, motorcycle -> {
+    private void fetchAndSaveVehicle(String make, String model, String yearId) {
+        FirebaseUtil.getMotorcycleDetails(make, model, yearId, motorcycle -> {
             if (motorcycle != null) {
                 FirebaseUtil.saveUserVehicle(motorcycle);
-                tvCurrentVehicle.setText(motorcycle.getYear() + " " + motorcycle.getMake() + " " + motorcycle.getModel());
-                Toast.makeText(this, "Vehicle updated!", Toast.LENGTH_SHORT).show();
+                String vehicleInfo = motorcycle.getYear() + " " + motorcycle.getMake() + " " + motorcycle.getModel();
+                tvCurrentVehicle.setText(vehicleInfo);
+                Toast.makeText(this, "Vehicle updated successfully!", Toast.LENGTH_SHORT).show();
             }
         });
     }
