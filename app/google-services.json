@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1006796677658",
+    "project_id": "loom-861fc",
+    "storage_bucket": "loom-861fc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1006796677658:android:acd211b64a58fb9933e7a3",
+        "android_client_info": {
+          "package_name": "com.example.loom_group_2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1006796677658-15ufrrmfmsiqk9tdt54192hcgbkj5sbs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.loom_group_2",
+            "certificate_hash": "64de8234d0aa5c5089e1d5807f89b197adeb8918"
+          }
+        },
+        {
+          "client_id": "1006796677658-cc0uuvd4l5bglhf24nkohld53ther00q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.loom_group_2",
+            "certificate_hash": "3a0886ea2727a91efb3a934b0093f554c788b4f1"
+          }
+        },
+        {
+          "client_id": "1006796677658-gm1qqjb7ee407plcgjmk5758tp01vuld.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7F_UBHdlZwypzzqOrtlXyPObZXL0wHsw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1006796677658-gm1qqjb7ee407plcgjmk5758tp01vuld.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

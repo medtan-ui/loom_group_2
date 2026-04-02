@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">loom_group_2</string>
+    <string name="add_profile_picture">Add Profile Picture</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="register">REGISTER</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    <string name="create_account">Create Account</string>
+    <string name="tap_to_change_photo">Tap to change photo</string>
+    <string name="default_web_client_id">1006796677658-gm1qqjb7ee407plcgjmk5758tp01vuld.apps.googleusercontent.com</string>
+</resources>

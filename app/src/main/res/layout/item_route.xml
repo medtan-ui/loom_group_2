@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/routeContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/route_item_selector"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tvRouteName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Main Rd."
+        android:textColor="#333333"
+        android:textSize="16sp"
+        android:textStyle="medium" />
+
+    <TextView
+        android:id="@+id/tvRouteTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="4dp"
+        android:text="21 mins"
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_baseline_access_time_24" />
+
+    <TextView
+        android:id="@+id/tvRouteFuel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:drawablePadding="4dp"
+        android:text="2.7 L"
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_baseline_local_gas_station_24" />
+
+</LinearLayout>
