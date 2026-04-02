@@ -21,8 +21,10 @@ import com.example.loom_group_2.data.Motorcycle;
 import com.example.loom_group_2.data.TripLog;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.MockRouteService;
+import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -121,7 +123,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             return;
         }
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+        CurrentLocationRequest locationRequest = new CurrentLocationRequest.Builder()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .build();
+
+        fusedLocationClient.getCurrentLocation(locationRequest, null).addOnSuccessListener(this, location -> {
             if (location != null) {
                 LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mMap != null) {
@@ -129,6 +135,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 }
                 simulateNewRoute();
             } else {
+                Toast.makeText(this, "Unable to get current location. Please check GPS settings.", Toast.LENGTH_SHORT).show();
                 simulateNewRoute(); // Fallback to mock if location is null
             }
         });
