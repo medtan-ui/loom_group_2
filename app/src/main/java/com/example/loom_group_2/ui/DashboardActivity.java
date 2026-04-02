@@ -1,12 +1,17 @@
 package com.example.loom_group_2.ui;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -16,6 +21,8 @@ import com.example.loom_group_2.data.Motorcycle;
 import com.example.loom_group_2.data.TripLog;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.MockRouteService;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,6 +48,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private ShapeableImageView ivProfile;
     private TextView btnViewAllLogs;
     private Motorcycle currentVehicle;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         
         mAuth = FirebaseAuth.getInstance();
         dataController = DataPersistenceController.getInstance(this);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         
         tvGreeting = findViewById(R.id.tvGreeting);
         tvFuelEfficiency = findViewById(R.id.tvFuelEfficiency);
@@ -66,7 +75,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         loadRecentLogs();
         loadUserVehicle();
         
-        searchBar.setOnClickListener(v -> simulateNewRoute());
+        searchBar.setOnClickListener(v -> detectLocationAndSimulate());
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         btnViewAllLogs.setOnClickListener(v -> startActivity(new Intent(this, LogsActivity.class)));
 
@@ -93,14 +102,36 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String name = user.getDisplayName();
+            if (name != null && !name.isEmpty()) {
+                String firstName = name.split(" ")[0];
+                tvGreeting.setText("Hello, " + firstName + "!");
+            }
 
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
                         .load(user.getPhotoUrl())
                         .into(ivProfile);
-            } else {
             }
         }
+    }
+
+    private void detectLocationAndSimulate() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+            return;
+        }
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                if (mMap != null) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f));
+                }
+                simulateNewRoute();
+            } else {
+                simulateNewRoute(); // Fallback to mock if location is null
+            }
+        });
     }
 
     private void simulateNewRoute() {
@@ -112,7 +143,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         Toast.makeText(this, "Calculating route...", Toast.LENGTH_SHORT).show();
         MockRouteService.calculateRoute("A", "B", (distanceKm, durationMins, fuelEstimateLiters) -> {
             runOnUiThread(() -> {
-                // Use actual vehicle data for more accurate dummy calculation
                 double realFuelNeeded = distanceKm / currentVehicle.getKpl();
                 
                 tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl()));
@@ -145,11 +175,15 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(14.6253, 121.0619), 15f));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        loadUserVehicle();
     }
 }

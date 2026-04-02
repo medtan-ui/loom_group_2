@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.loom_group_2.R;
-import com.example.loom_group_2.data.RouteModel;
 import java.util.List;
 
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
@@ -61,4 +60,4 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             container = itemView.findViewById(R.id.routeContainer);
         }
     }
-}}
+}

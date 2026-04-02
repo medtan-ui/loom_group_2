@@ -98,6 +98,8 @@ public class FirebaseUtil {
                     callback.onCallback(null);
                 }
             });
+        } else {
+            callback.onCallback(null);
         }
     }
 }

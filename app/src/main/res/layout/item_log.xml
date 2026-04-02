@@ -30,7 +30,7 @@
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mon, Dec 2025"
+                android:text="@string/placeholder_date"
                 android:textSize="10sp"
                 android:textColor="#BCBCBC" />
 
@@ -38,7 +38,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Home to Campus"
+                android:text="@string/placeholder_route"
                 android:textStyle="bold"
                 android:textColor="#566573" />
         </LinearLayout>
@@ -47,14 +47,14 @@
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="15 mins"
+            android:text="@string/placeholder_time"
             android:layout_marginEnd="8dp"/>
 
         <TextView
             android:id="@+id/tvFuel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1.1 L"
+            android:text="@string/placeholder_fuel"
             android:textStyle="bold" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
