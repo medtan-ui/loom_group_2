@@ -14,15 +14,12 @@
       },
       "oauth_client": [
         {
-          "client_id": "1006796677658-15ufrrmfmsiqk9tdt54192hcgbkj5sbs.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.loom_group_2",
-            "certificate_hash": "64de8234d0aa5c5089e1d5807f89b197adeb8918"
           }
         },
         {
-          "client_id": "1006796677658-cc0uuvd4l5bglhf24nkohld53ther00q.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.loom_group_2",
@@ -36,7 +33,6 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD7F_UBHdlZwypzzqOrtlXyPObZXL0wHsw"
         }
       ],
       "services": {

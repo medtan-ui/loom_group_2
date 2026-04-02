@@ -110,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     firebaseAuthWithGoogle(account.getIdToken());
                 }
             } catch (ApiException e) {
-                Log.e(TAG, "Google sign in failed", e);
-                Toast.makeText(this, "Sign in failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -93,26 +93,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String name = user.getDisplayName();
-<<<<<<< HEAD
-            String firstName = "User";
 
-            if (name != null && !name.trim().isEmpty()) {
-                firstName = name.trim().split("\\s+")[0];
-            }
-
-            tvGreeting.setText("Hello, " + firstName + "!");
-
-=======
-            tvGreeting.setText("Hello, " + (name != null ? name : "User") + "!");
-            
->>>>>>> dbcd34ef036bb085e8ad3e3ec00a4d122fd3c4d9
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
                         .load(user.getPhotoUrl())
-                        .placeholder(R.drawable.ic_launcher_background)
                         .into(ivProfile);
             } else {
-                ivProfile.setImageResource(R.drawable.ic_launcher_background);
             }
         }
     }
@@ -165,7 +151,5 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
-        loadUserVehicle(); // Refresh if they changed vehicle in Profile
-        updateUserInfo();  // Refresh profile picture if changed
     }
 }
