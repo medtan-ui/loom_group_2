@@ -25,14 +25,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
-<<<<<<< HEAD
-        android:text="21 mins"
+        android:text="@string/placeholder_time"
         android:textSize="14sp"
         app:drawableStartCompat="@drawable/ic_road" />
-=======
-        android:text="@string/placeholder_time"
-        android:textSize="14sp" />
->>>>>>> 55a1390ab6befdb60463c27e7016e82352866ecf
 
     <TextView
         android:id="@+id/tvRouteFuel"
@@ -40,13 +35,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:drawablePadding="4dp"
-<<<<<<< HEAD
-        android:text="2.7 L"
+        android:text="@string/placeholder_fuel"
         android:textSize="14sp"
         app:drawableStartCompat="@drawable/ic_gas" />
-=======
-        android:text="@string/placeholder_fuel"
-        android:textSize="14sp" />
->>>>>>> 55a1390ab6befdb60463c27e7016e82352866ecf
 
 </LinearLayout>

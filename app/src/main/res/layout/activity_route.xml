@@ -14,6 +14,21 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline_horizontal"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_circle_yellow"
+        android:contentDescription="Back"
+        android:elevation="8dp"
+        android:padding="12dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="#605520" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_horizontal"
         android:layout_width="wrap_content"
@@ -58,7 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="12dp"
-                android:backgroundTint="#EEDC82"
+                android:backgroundTint="#FFCC3F"
                 android:text="@string/start_navigation"
                 android:textAllCaps="false"
                 android:textColor="#605520"
