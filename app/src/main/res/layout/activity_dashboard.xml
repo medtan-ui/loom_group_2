@@ -13,13 +13,19 @@
 
         <TextView
             android:id="@+id/tvGreeting"
+<<<<<<< HEAD
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
+=======
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+>>>>>>> dbcd34ef036bb085e8ad3e3ec00a4d122fd3c4d9
             android:text="Hello!"
             android:textColor="#FFCC3F"
             android:textSize="28sp"
             android:textStyle="bold"
+<<<<<<< HEAD
             app:layout_constraintEnd_toStartOf="@+id/ivChat"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,6 +45,11 @@
             app:layout_constraintTop_toTopOf="@+id/ivProfile"
             app:tint="#FFCC3F" />
 
+=======
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+>>>>>>> dbcd34ef036bb085e8ad3e3ec00a4d122fd3c4d9
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivProfile"
             android:layout_width="55dp"
@@ -278,4 +289,8 @@
             app:layout_constraintTop_toBottomOf="@+id/tvRecentLogsLabel" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+<<<<<<< HEAD
 </ScrollView>
+=======
+</ScrollView>
+>>>>>>> dbcd34ef036bb085e8ad3e3ec00a4d122fd3c4d9

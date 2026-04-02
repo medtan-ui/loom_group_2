@@ -93,6 +93,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String name = user.getDisplayName();
+<<<<<<< HEAD
             String firstName = "User";
 
             if (name != null && !name.trim().isEmpty()) {
@@ -101,6 +102,10 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
             tvGreeting.setText("Hello, " + firstName + "!");
 
+=======
+            tvGreeting.setText("Hello, " + (name != null ? name : "User") + "!");
+            
+>>>>>>> dbcd34ef036bb085e8ad3e3ec00a4d122fd3c4d9
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
                         .load(user.getPhotoUrl())
