@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton; // Added Import
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +36,7 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
     private RouteAdapter adapter;
     private List<RouteModel> routes = new ArrayList<>();
     private Button btnStartNavigation;
+    private ImageButton btnBack; // Added Variable
     private Motorcycle currentVehicle;
     private List<Polyline> polylines = new ArrayList<>();
 
@@ -45,10 +47,16 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
 
         recyclerView = findViewById(R.id.rvRoutes);
         btnStartNavigation = findViewById(R.id.btnStartNavigation);
+        btnBack = findViewById(R.id.btnBack); // Added Initialization
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RouteAdapter(routes, this);
         recyclerView.setAdapter(adapter);
+
+        // Added Back Button Logic
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -98,7 +106,7 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
 
             double kpl = (currentVehicle != null) ? currentVehicle.getKpl() : 15.0;
             String name = (route.summary != null && !route.summary.isEmpty()) ? route.summary : "Route " + (i + 1);
-            
+
             routes.add(new RouteModel(name, leg.duration.value, (double) leg.distance.value, kpl));
 
             // Draw on map
@@ -113,7 +121,7 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
         }
 
         adapter.notifyDataSetChanged();
-        
+
         if (!response.routes.isEmpty()) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100));
         }
