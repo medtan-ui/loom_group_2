@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.play.services.maps)
     implementation(libs.play.services.auth)
+    implementation(libs.play.services.location)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.firebase.ui.auth)
