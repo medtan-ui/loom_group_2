@@ -15,7 +15,7 @@
             android:id="@+id/tvGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello!"
+            android:text="@string/hello"
             android:textColor="#FFCC3F"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Current Location"
+                android:text="@string/current_location"
                 android:textColor="#D5DBDB"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -84,7 +84,7 @@
                     android:id="@+id/labelNextTrip"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Next Trip"
+                    android:text="@string/next_trip"
                     android:textColor="#FFCC3F"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -95,7 +95,7 @@
                     android:id="@+id/tvTripDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="--"
+                    android:text="@string/dash_placeholder"
                     android:textColor="#FFCC3F"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -155,7 +155,7 @@
                             android:id="@+id/tvFuelEfficiency"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="--"
+                            android:text="@string/dash_placeholder"
                             android:textColor="#FFCC3F"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -168,7 +168,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:text="Fuel est."
+                        android:text="@string/fuel_est_label"
                         android:textColor="#FFCC3F"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -207,7 +207,7 @@
                             android:id="@+id/tvTimeEst"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="--"
+                            android:text="@string/dash_placeholder"
                             android:textColor="#FFCC3F"
                             android:textSize="22sp"
                             android:textStyle="bold" />
@@ -219,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:text="Time est."
+                        android:text="@string/time_est_label"
                         android:textColor="#FFCC3F"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -231,7 +231,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Recent Logs"
+            android:text="@string/recent_logs"
             android:textColor="#FFCC3F"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -242,7 +242,7 @@
             android:id="@+id/btnViewAllLogs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="View All"
+            android:text="@string/view_all"
             android:textColor="#FFCC3F"
             android:textSize="14sp"
             android:textStyle="bold"

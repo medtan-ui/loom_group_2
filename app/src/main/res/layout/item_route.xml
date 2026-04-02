@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/routeContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,19 +15,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Main Rd."
+        android:text="@string/placeholder_road"
         android:textColor="#333333"
         android:textSize="16sp"
-        android:textStyle="medium" />
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvRouteTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
-        android:text="21 mins"
-        android:textSize="14sp"
-        app:drawableStartCompat="@drawable/ic_baseline_access_time_24" />
+        android:text="@string/placeholder_time"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tvRouteFuel"
@@ -34,8 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:drawablePadding="4dp"
-        android:text="2.7 L"
-        android:textSize="14sp"
-        app:drawableStartCompat="@drawable/ic_baseline_local_gas_station_24" />
+        android:text="@string/placeholder_fuel"
+        android:textSize="14sp" />
 
 </LinearLayout>

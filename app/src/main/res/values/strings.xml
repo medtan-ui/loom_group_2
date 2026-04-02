@@ -9,4 +9,48 @@
     <string name="create_account">Create Account</string>
     <string name="tap_to_change_photo">Tap to change photo</string>
     <string name="default_web_client_id">1006796677658-gm1qqjb7ee407plcgjmk5758tp01vuld.apps.googleusercontent.com</string>
+    <string name="routes_title">Routes</string>
+    <string name="start_navigation">Start Navigation</string>
+    <string name="chat_user_fuel_query">How much fuel did I use?</string>
+    <string name="logo_name">LOOM</string>
+    <string name="login">LOGIN</string>
+    <string name="dont_have_account">Don\'t have an account? Sign Up</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="chat_assistant_title">Loom AI Assistant</string>
+    <string name="chat_input_hint">Ask about your trip...</string>
+    <string name="my_vehicle">My Vehicle</string>
+    <string name="no_vehicle_selected">No vehicle selected</string>
+    <string name="change">Change</string>
+    <string name="logout">LOGOUT</string>
+    <string name="default_user_name">User Name</string>
+    <string name="default_user_email">user@email.com</string>
+
+    <!-- Dashboard -->
+    <string name="current_location">Current Location</string>
+    <string name="next_trip">Next Trip</string>
+    <string name="fuel_est_label">Fuel est.</string>
+    <string name="time_est_label">Time est.</string>
+    <string name="recent_logs">Recent Logs</string>
+    <string name="view_all">View All</string>
+    <string name="hello">Hello!</string>
+    <string name="dash_placeholder">--</string>
+
+    <!-- Logs -->
+    <string name="all_travel_logs">All Travel Logs</string>
+
+    <!-- Verification -->
+    <string name="email_verification_title">Email Verification</string>
+    <string name="verification_sent_msg">A verification link has been sent to your email address. Please click it to continue.</string>
+    <string name="verification_warning">Warning: You must verify your email within 10 minutes, or your account will be deleted.</string>
+    <string name="resend_link_prefix">Resend Link in: </string>
+    <string name="ive_verified">I\'ve Verified</string>
+    <string name="verify_email_hint">Please put your existing email address.</string>
+    <string name="send_code">Send code</string>
+
+    <!-- Item Placeholders (for design time) -->
+    <string name="placeholder_road">Main Rd.</string>
+    <string name="placeholder_time">21 mins</string>
+    <string name="placeholder_fuel">2.7 L</string>
+    <string name="placeholder_date">Mon, Dec 2025</string>
+    <string name="placeholder_route">Home to Campus</string>
 </resources>

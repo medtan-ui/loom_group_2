@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Loom AI Assistant"
+            android:text="@string/chat_assistant_title"
             android:textColor="#444444"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/search_bar_bg"
-            android:hint="Ask about your trip..."
+            android:hint="@string/chat_input_hint"
             android:minHeight="45dp"
             android:paddingHorizontal="16dp"
             android:textSize="14sp" />
