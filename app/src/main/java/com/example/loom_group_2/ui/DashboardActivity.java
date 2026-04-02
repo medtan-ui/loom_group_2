@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.example.loom_group_2.R;
 import com.example.loom_group_2.data.FirebaseUtil;
 import com.example.loom_group_2.data.Motorcycle;
@@ -61,7 +62,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         btnViewAllLogs = findViewById(R.id.btnViewAllLogs);
 
         setupRecyclerView();
-        updateGreeting();
+        updateUserInfo();
         loadRecentLogs();
         loadUserVehicle();
         
@@ -88,11 +89,20 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         rvLogs.setAdapter(logAdapter);
     }
 
-    private void updateGreeting() {
+    private void updateUserInfo() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
             String name = user.getDisplayName();
             tvGreeting.setText("Hello, " + (name != null ? name : "User") + "!");
+            
+            if (user.getPhotoUrl() != null) {
+                Glide.with(this)
+                        .load(user.getPhotoUrl())
+                        .placeholder(R.drawable.ic_launcher_background)
+                        .into(ivProfile);
+            } else {
+                ivProfile.setImageResource(R.drawable.ic_launcher_background);
+            }
         }
     }
 
@@ -145,5 +155,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     protected void onResume() {
         super.onResume();
         loadUserVehicle(); // Refresh if they changed vehicle in Profile
+        updateUserInfo();  // Refresh profile picture if changed
     }
 }

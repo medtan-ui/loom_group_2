@@ -32,6 +32,8 @@
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:paddingStart="20dp"
+        android:textColor="#2C3E50"
+        android:textColorHint="#95A5A6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoText" />
@@ -46,6 +48,8 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:paddingStart="20dp"
+        android:textColor="#2C3E50"
+        android:textColorHint="#95A5A6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/etEmail" />
@@ -88,13 +92,15 @@
         app:layout_constraintTop_toBottomOf="@+id/btnGoogleSignIn" />
 
     <TextView
-        android:id="@+id/tvCantSignIn"
+        android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:text="Can't Sign in?"
+        android:text="Forgot Password?"
         android:textColor="#BCBCBC"
         android:textSize="14sp"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

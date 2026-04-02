@@ -1,25 +1,39 @@
 package com.example.loom_group_2.ui;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.bumptech.glide.Glide;
 import com.example.loom_group_2.R;
 import com.example.loom_group_2.data.FirebaseUtil;
-import com.example.loom_group_2.data.Motorcycle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import java.util.List;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity {
+    private static final int PICK_IMAGE_REQUEST = 1;
+    
     private TextView tvName, tvEmail, tvCurrentVehicle;
+    private ImageView ivProfileLarge;
     private Button btnLogout, btnSelectVehicle;
     private ImageButton btnBack;
+    
     private FirebaseAuth mAuth;
+    private FirebaseStorage mStorage;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +41,10 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         mAuth = FirebaseAuth.getInstance();
+        mStorage = FirebaseStorage.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
+        ivProfileLarge = findViewById(R.id.ivProfileLarge);
         tvName = findViewById(R.id.tvProfileName);
         tvEmail = findViewById(R.id.tvProfileEmail);
         tvCurrentVehicle = findViewById(R.id.tvCurrentVehicle);
@@ -39,8 +55,20 @@ public class ProfileActivity extends AppCompatActivity {
         if (user != null) {
             tvName.setText(user.getDisplayName() != null ? user.getDisplayName() : "No Name");
             tvEmail.setText(user.getEmail());
+            loadProfileImage(user.getPhotoUrl());
             loadUserVehicle();
         }
+
+        // Click to Edit, Long Click to View Full
+        ivProfileLarge.setOnClickListener(v -> openGallery());
+        ivProfileLarge.setOnLongClickListener(v -> {
+            if (user != null && user.getPhotoUrl() != null) {
+                showFullImage(user.getPhotoUrl());
+            } else {
+                Toast.makeText(this, "No profile picture to view", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
 
         btnBack.setOnClickListener(v -> finish());
         
@@ -53,6 +81,69 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         btnSelectVehicle.setOnClickListener(v -> showMakeSelection());
+    }
+
+    private void loadProfileImage(Uri photoUrl) {
+        if (photoUrl != null) {
+            Glide.with(this)
+                    .load(photoUrl)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_background)
+                    .circleCrop()
+                    .into(ivProfileLarge);
+        }
+    }
+
+    private void showFullImage(Uri photoUrl) {
+        Dialog builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        
+        ImageView imageView = new ImageView(this);
+        Glide.with(this).load(photoUrl).into(imageView);
+        builder.addContentView(imageView, new android.widget.RelativeLayout.LayoutParams(
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                android.view.ViewGroup.LayoutParams.MATCH_PARENT));
+        builder.show();
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            imageUri = data.getData();
+            uploadImageAndUpdateProfile();
+        }
+    }
+
+    private void uploadImageAndUpdateProfile() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null || imageUri == null) return;
+
+        Toast.makeText(this, "Uploading...", Toast.LENGTH_SHORT).show();
+        StorageReference profileRef = mStorage.getReference().child("profile_pics/" + user.getUid() + ".jpg");
+        
+        profileRef.putFile(imageUri).addOnSuccessListener(taskSnapshot -> {
+            profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setPhotoUri(uri)
+                        .build();
+
+                user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        loadProfileImage(uri);
+                        Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void loadUserVehicle() {
@@ -91,7 +182,6 @@ public class ProfileActivity extends AppCompatActivity {
     private void showYearSelection(String make, String model) {
         FirebaseUtil.getYears(make, model, yearIds -> {
             String[] items = yearIds.toArray(new String[0]);
-            // Format labels for display (e.g. "2023_Manual" -> "2023 (Manual)")
             String[] labels = new String[items.length];
             for (int i = 0; i < items.length; i++) {
                 labels[i] = items[i].replace("_", " (") + ")";

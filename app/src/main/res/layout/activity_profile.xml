@@ -36,6 +36,9 @@
         android:layout_height="120dp"
         android:layout_marginTop="60dp"
         android:src="@drawable/ic_launcher_background"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logoProfile"
@@ -44,17 +47,29 @@
         app:strokeWidth="4dp" />
 
     <TextView
+        android:id="@+id/tvChangePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Tap to change photo"
+        android:textColor="#FFCC3F"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivProfileLarge" />
+
+    <TextView
         android:id="@+id/tvProfileName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:text="User Name"
         android:textColor="#566573"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivProfileLarge" />
+        app:layout_constraintTop_toBottomOf="@+id/tvChangePhoto" />
 
     <TextView
         android:id="@+id/tvProfileEmail"

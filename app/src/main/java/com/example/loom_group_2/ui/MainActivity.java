@@ -3,6 +3,7 @@ package com.example.loom_group_2.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -18,10 +19,13 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private EditText etEmail, etPassword;
     private Button btnLogin;
@@ -37,12 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            if (currentUser.isEmailVerified()) {
+                startActivity(new Intent(this, DashboardActivity.class));
+                finish();
+            } else {
+                checkStaleAccount(currentUser);
+            }
         }
 
-        // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -54,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnGoogleSignIn = findViewById(R.id.btnGoogleSignIn);
-        tvForgotPassword = findViewById(R.id.tvCantSignIn);
+        tvForgotPassword = findViewById(R.id.tvForgotPassword);
         tvSignUp = findViewById(R.id.tvSignUp);
         
         tvForgotPassword.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
@@ -64,9 +72,30 @@ public class MainActivity extends AppCompatActivity {
         btnGoogleSignIn.setOnClickListener(v -> signIn());
     }
 
+    private void checkStaleAccount(FirebaseUser user) {
+        if (user.getMetadata() == null) return;
+        
+        long creationTime = user.getMetadata().getCreationTimestamp();
+        long currentTime = System.currentTimeMillis();
+        long tenMinutesInMillis = 10 * 60 * 1000;
+
+        if (currentTime - creationTime > tenMinutesInMillis) {
+            // Account is older than 10 mins and still unverified. Delete it.
+            user.delete().addOnCompleteListener(task -> {
+                mAuth.signOut();
+                Toast.makeText(MainActivity.this, "Verification period expired. Account deleted.", Toast.LENGTH_LONG).show();
+            });
+        } else {
+            // Still in the window, but we sign them out to force a fresh login/verification check
+            mAuth.signOut();
+        }
+    }
+
     private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
+        mGoogleSignInClient.signOut().addOnCompleteListener(task -> {
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            startActivityForResult(signInIntent, RC_SIGN_IN);
+        });
     }
 
     @Override
@@ -77,9 +106,12 @@ public class MainActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
+                if (account != null) {
+                    firebaseAuthWithGoogle(account.getIdToken());
+                }
             } catch (ApiException e) {
-                Toast.makeText(this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Google sign in failed", e);
+                Toast.makeText(this, "Sign in failed: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -89,8 +121,22 @@ public class MainActivity extends AppCompatActivity {
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-                        finish();
+                        AuthResult result = task.getResult();
+                        boolean isNewUser = result != null && result.getAdditionalUserInfo() != null && result.getAdditionalUserInfo().isNewUser();
+                        
+                        if (isNewUser) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                user.delete().addOnCompleteListener(deleteTask -> {
+                                    mAuth.signOut();
+                                    mGoogleSignInClient.signOut();
+                                    Toast.makeText(MainActivity.this, "Account not found. Please Register first.", Toast.LENGTH_LONG).show();
+                                });
+                            }
+                        } else {
+                            startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                            finish();
+                        }
                     } else {
                         Toast.makeText(MainActivity.this, "Authentication Failed.", Toast.LENGTH_SHORT).show();
                     }
@@ -106,8 +152,25 @@ public class MainActivity extends AppCompatActivity {
         }
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                startActivity(new Intent(this, DashboardActivity.class));
-                finish();
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    if (user.isEmailVerified()) {
+                        startActivity(new Intent(this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        // Check if it's stale before signing them out
+                        long creationTime = user.getMetadata().getCreationTimestamp();
+                        if (System.currentTimeMillis() - creationTime > (10 * 60 * 1000)) {
+                            user.delete().addOnCompleteListener(t -> {
+                                mAuth.signOut();
+                                Toast.makeText(this, "Verification expired. Account deleted.", Toast.LENGTH_LONG).show();
+                            });
+                        } else {
+                            mAuth.signOut();
+                            Toast.makeText(this, "Please verify your email first.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
             } else {
                 Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
