@@ -22,40 +22,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/profileActionArea"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfile"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:padding="2dp"
+            android:src="@drawable/ic_launcher_background"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivChat"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginEnd="16dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="6dp"
-                android:src="@drawable/ic_chat"
-                app:tint="#FFCC3F" />
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/ivProfile"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="2dp"
-                android:src="@drawable/ic_launcher_background"
-                app:shapeAppearanceOverlay="@style/CircleImage"
-                app:strokeColor="#FFCC3F"
-                app:strokeWidth="2dp" />
-
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImage"
+            app:strokeColor="#FFCC3F"
+            app:strokeWidth="2dp" />
 
         <LinearLayout
             android:id="@+id/searchBar"

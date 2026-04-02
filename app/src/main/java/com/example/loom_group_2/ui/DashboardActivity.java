@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -49,7 +48,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private DataPersistenceController dataController;
     private LinearLayout searchBar;
     private ShapeableImageView ivProfile;
-    private ImageView ivChat;
     private TextView btnViewAllLogs;
     private Motorcycle currentVehicle;
     private FusedLocationProviderClient fusedLocationClient;
@@ -58,11 +56,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
-
+        
         mAuth = FirebaseAuth.getInstance();
         dataController = DataPersistenceController.getInstance(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        
         tvGreeting = findViewById(R.id.tvGreeting);
         tvFuelEfficiency = findViewById(R.id.tvFuelEfficiency);
         tvTimeEst = findViewById(R.id.tvTimeEst);
@@ -72,17 +70,15 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         progressFuel = findViewById(R.id.progressFuel);
         progressTime = findViewById(R.id.progressTime);
         ivProfile = findViewById(R.id.ivProfile);
-        ivChat = findViewById(R.id.ivChat);
         btnViewAllLogs = findViewById(R.id.btnViewAllLogs);
 
         setupRecyclerView();
         updateUserInfo();
         loadRecentLogs();
         loadUserVehicle();
-
+        
         searchBar.setOnClickListener(v -> detectLocationAndSimulate());
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
-        ivChat.setOnClickListener(v -> startActivity(new Intent(this, ChatActivity.class)));
         btnViewAllLogs.setOnClickListener(v -> startActivity(new Intent(this, LogsActivity.class)));
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
@@ -155,16 +151,16 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         MockRouteService.calculateRoute("A", "B", (distanceKm, durationMins, fuelEstimateLiters) -> {
             runOnUiThread(() -> {
                 double realFuelNeeded = distanceKm / currentVehicle.getKpl();
-
+                
                 tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl()));
                 tvTimeEst.setText(String.valueOf(durationMins));
                 tvTripDuration.setText(durationMins + " min");
-
-                progressFuel.setProgress((int) Math.min(100, (realFuelNeeded * 10)));
+                
+                progressFuel.setProgress((int) Math.min(100, (realFuelNeeded * 10))); 
                 progressTime.setProgress(durationMins > 100 ? 100 : durationMins);
-
+                
                 String date = java.text.DateFormat.getDateInstance().format(new java.util.Date());
-                TripLog newLog = new TripLog(date, "Trip with " + currentVehicle.getModel(),
+                TripLog newLog = new TripLog(date, "Trip with " + currentVehicle.getModel(), 
                         durationMins + " mins", String.format(Locale.US, "%.2f L", realFuelNeeded));
                 dataController.addTripLog(newLog, this::loadRecentLogs);
             });
