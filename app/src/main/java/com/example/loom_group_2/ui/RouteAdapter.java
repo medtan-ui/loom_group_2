@@ -13,10 +13,16 @@ import java.util.List;
 public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHolder> {
 
     private List<RouteModel> routeList;
-    private int selectedPosition = 0; // Default first route selected
+    private int selectedPosition = 0;
+    private OnRouteClickListener listener;
 
-    public RouteAdapter(List<RouteModel> routeList) {
+    public interface OnRouteClickListener {
+        void onRouteClick(int position);
+    }
+
+    public RouteAdapter(List<RouteModel> routeList, OnRouteClickListener listener) {
         this.routeList = routeList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -34,7 +40,6 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
         holder.tvTime.setText(route.getDurationText());
         holder.tvFuel.setText(route.getFuelText());
 
-        // Update background based on selector (Blue/Yellow)
         holder.container.setSelected(selectedPosition == position);
 
         holder.itemView.setOnClickListener(v -> {
@@ -42,11 +47,18 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
             selectedPosition = holder.getAdapterPosition();
             notifyItemChanged(oldPos);
             notifyItemChanged(selectedPosition);
+            if (listener != null) {
+                listener.onRouteClick(selectedPosition);
+            }
         });
     }
 
     @Override
     public int getItemCount() { return routeList.size(); }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
 
     static class RouteViewHolder extends RecyclerView.ViewHolder {
         TextView tvName, tvTime, tvFuel;

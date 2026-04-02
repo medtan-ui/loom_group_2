@@ -53,4 +53,7 @@
     <string name="placeholder_fuel">2.7 L</string>
     <string name="placeholder_date">Mon, Dec 2025</string>
     <string name="placeholder_route">Home to Campus</string>
+
+    <!-- Google Maps API Key -->
+    <string name="google_maps_key" translatable="false">AIzaSyCzIKNav44zEEGMxfNHuIjk1puflQVR7vk</string>
 </resources>
