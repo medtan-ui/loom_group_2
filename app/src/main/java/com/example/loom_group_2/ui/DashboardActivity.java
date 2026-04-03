@@ -19,8 +19,10 @@ import com.example.loom_group_2.R;
 import com.example.loom_group_2.data.FirebaseUtil;
 import com.example.loom_group_2.data.Motorcycle;
 import com.example.loom_group_2.data.TripLog;
+import com.example.loom_group_2.logic.ActiveVehiclePrefs;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.MockRouteService;
+import com.example.loom_group_2.logic.VehicleRepository;
 import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -46,6 +48,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private LogAdapter logAdapter;
     private List<TripLog> tripLogs = new ArrayList<>();
     private DataPersistenceController dataController;
+    private ActiveVehiclePrefs vehiclePrefs;
+    private VehicleRepository vehicleRepository;
     private LinearLayout searchBar;
     private ShapeableImageView ivProfile;
     private TextView btnViewAllLogs;
@@ -59,6 +63,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         
         mAuth = FirebaseAuth.getInstance();
         dataController = DataPersistenceController.getInstance(this);
+        vehiclePrefs = new ActiveVehiclePrefs(this);
+        vehicleRepository = VehicleRepository.getInstance(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         
         tvGreeting = findViewById(R.id.tvGreeting);
@@ -75,7 +81,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         setupRecyclerView();
         updateUserInfo();
         loadRecentLogs();
-        loadUserVehicle();
+        restoreActiveVehicle();
         
         searchBar.setOnClickListener(v -> detectLocationAndSimulate());
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
@@ -85,13 +91,34 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         if (mapFragment != null) mapFragment.getMapAsync(this);
     }
 
-    private void loadUserVehicle() {
-        FirebaseUtil.getUserVehicle(motorcycle -> {
-            if (motorcycle != null) {
-                this.currentVehicle = motorcycle;
-                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
-            }
-        });
+    private void restoreActiveVehicle() {
+        if (!vehiclePrefs.hasActiveVehicle()) {
+            Toast.makeText(this, "Please select a vehicle in Profile first", Toast.LENGTH_LONG).show();
+            tvFuelEfficiency.setText("--");
+            return;
+        }
+
+        String source = vehiclePrefs.getActiveSource();
+        if ("room".equals(source)) {
+            int id = vehiclePrefs.getActiveVehicleId();
+            vehicleRepository.getVehicleById(id, vehicle -> {
+                runOnUiThread(() -> {
+                    if (vehicle != null) {
+                        this.currentVehicle = vehicle;
+                        tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", vehicle.getKpl()));
+                        Toast.makeText(this, "Restored your active vehicle", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        } else if ("firestore".equals(source)) {
+            FirebaseUtil.getUserVehicle(motorcycle -> {
+                if (motorcycle != null) {
+                    this.currentVehicle = motorcycle;
+                    tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
+                    Toast.makeText(this, "Restored your active vehicle", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void setupRecyclerView() {
@@ -191,6 +218,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
-        loadUserVehicle();
+        restoreActiveVehicle();
     }
 }
