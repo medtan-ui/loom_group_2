@@ -28,19 +28,21 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         holder.tvTitle.setText(log.getTitle());
         holder.tvTime.setText(log.getTime());
         holder.tvFuel.setText(log.getFuel());
+        holder.tvDistance.setText(log.getDistance());
     }
 
     @Override
     public int getItemCount() { return logList.size(); }
 
     public static class LogViewHolder extends RecyclerView.ViewHolder {
-        TextView tvDate, tvTitle, tvTime, tvFuel;
+        TextView tvDate, tvTitle, tvTime, tvFuel, tvDistance;
         public LogViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tvDate);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvTime = itemView.findViewById(R.id.tvTime);
             tvFuel = itemView.findViewById(R.id.tvFuel);
+            tvDistance = itemView.findViewById(R.id.tvDistance);
         }
     }
 }

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -28,10 +27,8 @@ import com.example.loom_group_2.data.TripLog;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.GoogleMapsService;
 import com.example.loom_group_2.logic.PolylineDecoder;
-import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,7 +46,7 @@ import java.util.Locale;
 
 public class DashboardActivity extends AppCompatActivity implements OnMapReadyCallback, RoutesFragment.OnRouteSelectedListener {
     private GoogleMap mMap;
-    private TextView tvGreeting, tvFuelEfficiency, tvTimeEst, tvTripDuration;
+    private TextView tvGreeting, tvFuelEfficiency, tvFuelUnit, tvTimeEst, tvTripDuration;
     private ProgressBar progressFuel, progressTime;
     private FirebaseAuth mAuth;
     private RecyclerView rvLogs;
@@ -75,6 +72,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         
         tvGreeting = findViewById(R.id.tvGreeting);
         tvFuelEfficiency = findViewById(R.id.tvFuelEfficiency);
+        tvFuelUnit = findViewById(R.id.tvFuelUnit);
         tvTimeEst = findViewById(R.id.tvTimeEst);
         tvTripDuration = findViewById(R.id.tvTripDuration);
         rvLogs = findViewById(R.id.rvLogs);
@@ -187,9 +185,10 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             double fuelNeeded = distanceKm / currentVehicle.getKpl();
             tvTimeEst.setText(String.valueOf(durationMins));
             tvTripDuration.setText(durationMins + " min");
-            tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", currentVehicle.getKpl()));
-            
-            progressFuel.setProgress((int) Math.min(100, (fuelNeeded * 10))); 
+            tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", fuelNeeded));
+            tvFuelUnit.setText(R.string.fuel_unit_liters);
+
+            progressFuel.setProgress((int) Math.min(100, (fuelNeeded * 20))); // Scaled for better visualization
             progressTime.setProgress(Math.min(100, durationMins));
         }
     }
@@ -203,7 +202,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         // Log the trip
         String date = java.text.DateFormat.getDateInstance().format(new java.util.Date());
         TripLog newLog = new TripLog(date, "Route: " + selectedRoute.getName(), 
-                selectedRoute.getDurationText(), selectedRoute.getFuelText());
+                selectedRoute.getDurationText(), selectedRoute.getFuelText(), selectedRoute.getDistanceText());
         dataController.addTripLog(newLog, this::loadRecentLogs);
     }
 
@@ -211,7 +210,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUtil.getUserVehicle(motorcycle -> {
             if (motorcycle != null) {
                 this.currentVehicle = motorcycle;
-                tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
+                if (tvFuelUnit != null && tvFuelUnit.getText().equals(getString(R.string.fuel_unit_kpl))) {
+                    tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
+                }
             }
         });
     }

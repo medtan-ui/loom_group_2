@@ -63,10 +63,11 @@
                     app:tint="#FFCC3F" />
 
                 <TextView
+                    android:id="@+id/tvSearchPlaceholder"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:text="@string/current_location"
+                    android:text="@string/select_destination"
                     android:textColor="#D5DBDB"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -165,7 +166,13 @@
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Km/L" android:textColor="#FFCC3F" android:textSize="10sp" />
+                            <TextView
+                                android:id="@+id/tvFuelUnit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/fuel_unit_kpl"
+                                android:textColor="#FFCC3F"
+                                android:textSize="10sp" />
                         </LinearLayout>
 
                         <TextView

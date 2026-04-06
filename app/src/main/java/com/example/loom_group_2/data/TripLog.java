@@ -12,12 +12,14 @@ public class TripLog {
     private String title;
     private String time;
     private String fuel;
+    private String distance;
 
-    public TripLog(String date, String title, String time, String fuel) {
+    public TripLog(String date, String title, String time, String fuel, String distance) {
         this.date = date;
         this.title = title;
         this.time = time;
         this.fuel = fuel;
+        this.distance = distance;
     }
 
     // Getters and Setters
@@ -31,4 +33,6 @@ public class TripLog {
     public void setTime(String time) { this.time = time; }
     public String getFuel() { return fuel; }
     public void setFuel(String fuel) { this.fuel = fuel; }
+    public String getDistance() { return distance; }
+    public void setDistance(String distance) { this.distance = distance; }
 }

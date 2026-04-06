@@ -21,6 +21,10 @@ public class RouteModel {
         return (durationSeconds / 60) + " mins";
     }
 
+    public String getDistanceText() {
+        return String.format(Locale.US, "%.1f km", distanceMeters / 1000.0);
+    }
+
     public String getFuelText() {
         // Convert meters to KM
         double distanceKm = distanceMeters / 1000.0;
