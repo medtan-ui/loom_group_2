@@ -3,6 +3,7 @@ package com.example.loom_group_2.logic;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
@@ -11,14 +12,14 @@ import retrofit2.http.Query;
 public class GoogleMapsService {
     private static final String BASE_URL = "https://maps.googleapis.com/";
     private static GoogleMapsService instance;
-    private final MapsApi api;
+    private final GoogleMapsApi api;
 
     private GoogleMapsService() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        api = retrofit.create(MapsApi.class);
+        api = retrofit.create(GoogleMapsApi.class);
     }
 
     public static synchronized GoogleMapsService getInstance() {
@@ -28,17 +29,17 @@ public class GoogleMapsService {
         return instance;
     }
 
-    public interface MapsApi {
+    public void getRoute(String origin, String destination, String apiKey, Callback<DirectionsResponse> callback) {
+        api.getDirections(origin, destination, apiKey).enqueue(callback);
+    }
+
+    private interface GoogleMapsApi {
         @GET("maps/api/directions/json")
         Call<DirectionsResponse> getDirections(
                 @Query("origin") String origin,
                 @Query("destination") String destination,
                 @Query("key") String apiKey
         );
-    }
-
-    public void getRoute(String origin, String destination, String apiKey, retrofit2.Callback<DirectionsResponse> callback) {
-        api.getDirections(origin, destination, apiKey).enqueue(callback);
     }
 
     public static class DirectionsResponse {
@@ -51,7 +52,7 @@ public class GoogleMapsService {
             @SerializedName("legs")
             public List<Leg> legs;
             @SerializedName("overview_polyline")
-            public Polyline overviewPolyline;
+            public OverviewPolyline overviewPolyline;
         }
 
         public static class Leg {
@@ -71,7 +72,7 @@ public class GoogleMapsService {
             public int value; // in seconds
         }
 
-        public static class Polyline {
+        public static class OverviewPolyline {
             @SerializedName("points")
             public String points;
         }
