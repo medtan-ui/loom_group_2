@@ -35,6 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "RegisterActivity";
     private static final int RC_SIGN_IN = 9001;
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final String ALLOWED_DOMAIN = "@tip.edu.ph";
     
     private EditText etEmail, etPassword, etName;
     private Button btnRegister;
@@ -97,7 +98,13 @@ public class RegisterActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account != null) {
-                    firebaseAuthWithGoogle(account.getIdToken());
+                    String email = account.getEmail();
+                    if (email != null && email.toLowerCase().endsWith(ALLOWED_DOMAIN)) {
+                        firebaseAuthWithGoogle(account.getIdToken());
+                    } else {
+                        mGoogleSignInClient.signOut();
+                        Toast.makeText(this, "Only " + ALLOWED_DOMAIN + " emails are allowed.", Toast.LENGTH_LONG).show();
+                    }
                 }
             } catch (ApiException e) {
             }
@@ -137,6 +144,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             Toast.makeText(this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!email.toLowerCase().endsWith(ALLOWED_DOMAIN)) {
+            Toast.makeText(this, "Only " + ALLOWED_DOMAIN + " emails are allowed.", Toast.LENGTH_LONG).show();
             return;
         }
 

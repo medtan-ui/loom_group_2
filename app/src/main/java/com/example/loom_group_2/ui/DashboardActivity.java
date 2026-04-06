@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -28,10 +27,8 @@ import com.example.loom_group_2.data.TripLog;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.GoogleMapsService;
 import com.example.loom_group_2.logic.PolylineDecoder;
-import com.google.android.gms.location.CurrentLocationRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -203,7 +200,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         // Log the trip
         String date = java.text.DateFormat.getDateInstance().format(new java.util.Date());
         TripLog newLog = new TripLog(date, "Route: " + selectedRoute.getName(), 
-                selectedRoute.getDurationText(), selectedRoute.getFuelText());
+                selectedRoute.getDurationText(), selectedRoute.getFuelText(), selectedRoute.getDistanceText());
         dataController.addTripLog(newLog, this::loadRecentLogs);
     }
 
