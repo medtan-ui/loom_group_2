@@ -26,4 +26,17 @@ public interface MotorcycleDao {
     
     @Query("SELECT * FROM motorcycles")
     List<Motorcycle> getAllMotorcycles();
+
+    // New methods for Part 2
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertCustomVehicle(Motorcycle m);
+
+    @Query("SELECT * FROM motorcycles WHERE userUid = :uid AND isCustom = 1 ORDER BY createdAt DESC")
+    List<Motorcycle> getCustomVehiclesByUser(String uid);
+
+    @Query("SELECT * FROM motorcycles WHERE id = :id LIMIT 1")
+    Motorcycle getVehicleById(int id);
+
+    @Query("DELETE FROM motorcycles WHERE id = :id")
+    void deleteVehicleById(int id);
 }

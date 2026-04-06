@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton; // Added Import
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,8 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.loom_group_2.R;
 import com.example.loom_group_2.data.FirebaseUtil;
 import com.example.loom_group_2.data.Motorcycle;
+import com.example.loom_group_2.logic.ActiveVehiclePrefs;
 import com.example.loom_group_2.logic.GoogleMapsService;
 import com.example.loom_group_2.logic.PolylineDecoder;
+import com.example.loom_group_2.logic.VehicleRepository;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,20 +38,32 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
     private RouteAdapter adapter;
     private List<RouteModel> routes = new ArrayList<>();
     private Button btnStartNavigation;
+    private ImageButton btnBack; // Added Variable
     private Motorcycle currentVehicle;
     private List<Polyline> polylines = new ArrayList<>();
+    private ActiveVehiclePrefs vehiclePrefs;
+    private VehicleRepository vehicleRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
+        vehiclePrefs = new ActiveVehiclePrefs(this);
+        vehicleRepository = VehicleRepository.getInstance(this);
+
         recyclerView = findViewById(R.id.rvRoutes);
         btnStartNavigation = findViewById(R.id.btnStartNavigation);
+        btnBack = findViewById(R.id.btnBack); // Added Initialization
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RouteAdapter(routes, this);
         recyclerView.setAdapter(adapter);
+
+        // Added Back Button Logic
+        btnBack.setOnClickListener(v -> {
+            finish();
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -56,12 +71,40 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
             mapFragment.getMapAsync(this);
         }
 
-        FirebaseUtil.getUserVehicle(motorcycle -> {
-            this.currentVehicle = motorcycle;
-            if (getIntent().hasExtra("origin") && getIntent().hasExtra("destination")) {
-                fetchRoutes(getIntent().getStringExtra("origin"), getIntent().getStringExtra("destination"));
-            }
-        });
+        restoreActiveVehicleAndFetch();
+    }
+
+    private void restoreActiveVehicleAndFetch() {
+        if (!vehiclePrefs.hasActiveVehicle()) {
+            Toast.makeText(this, "Please select a vehicle in Profile first", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String source = vehiclePrefs.getActiveSource();
+        if ("room".equals(source)) {
+            int id = vehiclePrefs.getActiveVehicleId();
+            vehicleRepository.getVehicleById(id, vehicle -> {
+                runOnUiThread(() -> {
+                    if (vehicle != null) {
+                        this.currentVehicle = vehicle;
+                        checkAndFetchRoutes();
+                    }
+                });
+            });
+        } else if ("firestore".equals(source)) {
+            FirebaseUtil.getUserVehicle(motorcycle -> {
+                if (motorcycle != null) {
+                    this.currentVehicle = motorcycle;
+                    checkAndFetchRoutes();
+                }
+            });
+        }
+    }
+
+    private void checkAndFetchRoutes() {
+        if (getIntent().hasExtra("origin") && getIntent().hasExtra("destination")) {
+            fetchRoutes(getIntent().getStringExtra("origin"), getIntent().getStringExtra("destination"));
+        }
     }
 
     private void fetchRoutes(String origin, String destination) {
@@ -98,7 +141,7 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
 
             double kpl = (currentVehicle != null) ? currentVehicle.getKpl() : 15.0;
             String name = (route.summary != null && !route.summary.isEmpty()) ? route.summary : "Route " + (i + 1);
-            
+
             routes.add(new RouteModel(name, leg.duration.value, (double) leg.distance.value, kpl));
 
             // Draw on map
@@ -113,7 +156,7 @@ public class RoutesActivity extends AppCompatActivity implements OnMapReadyCallb
         }
 
         adapter.notifyDataSetChanged();
-        
+
         if (!response.routes.isEmpty()) {
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100));
         }
