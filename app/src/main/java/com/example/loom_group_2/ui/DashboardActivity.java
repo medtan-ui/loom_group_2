@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -56,6 +57,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private LinearLayout searchBar;
     private ShapeableImageView ivProfile;
     private TextView btnViewAllLogs;
+    private FloatingActionButton fabAI;
     private Motorcycle currentVehicle;
     private FusedLocationProviderClient fusedLocationClient;
     private FrameLayout fragmentContainer;
@@ -81,6 +83,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         progressTime = findViewById(R.id.progressTime);
         ivProfile = findViewById(R.id.ivProfile);
         btnViewAllLogs = findViewById(R.id.btnViewAllLogs);
+        fabAI = findViewById(R.id.fabAI);
         fragmentContainer = findViewById(R.id.fragmentContainer);
 
         setupRecyclerView();
@@ -91,6 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         searchBar.setOnClickListener(v -> promptForDestination());
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         btnViewAllLogs.setOnClickListener(v -> startActivity(new Intent(this, LogsActivity.class)));
+        fabAI.setOnClickListener(v -> startActivity(new Intent(this, AIChatActivity.class)));
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
         if (mapFragment != null) mapFragment.getMapAsync(this);

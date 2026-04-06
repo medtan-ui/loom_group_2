@@ -17,8 +17,10 @@ firebaseUiAuth = "9.1.1"
 room = "2.6.1"
 firebaseFirestore = "26.1.2"
 glide = "4.16.0"
+guava = "33.4.8-android"
 
 [libraries]
+firebase-ai = { group = "com.google.firebase", name = "firebase-ai", version = "17.10.1" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -41,6 +43,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+guava = { group = "com.google.guava", name = "guava", version = "31.1-android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
