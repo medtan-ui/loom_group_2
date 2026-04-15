@@ -36,6 +36,15 @@ public class DataPersistenceController {
         });
     }
 
+    public void deleteTripLog(TripLog log, Runnable callback) {
+        executorService.execute(() -> {
+            tripDao.delete(log);
+            if (callback != null) {
+                callback.run();
+            }
+        });
+    }
+
     public void getAllTripLogs(DataCallback<List<TripLog>> callback) {
         executorService.execute(() -> {
             List<TripLog> logs = tripDao.getAllLogs();

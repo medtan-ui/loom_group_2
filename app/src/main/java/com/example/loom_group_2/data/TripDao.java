@@ -1,6 +1,7 @@
 package com.example.loom_group_2.data;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import java.util.List;
@@ -9,6 +10,9 @@ import java.util.List;
 public interface TripDao {
     @Insert
     void insert(TripLog tripLog);
+
+    @Delete
+    void delete(TripLog tripLog);
 
     @Query("SELECT * FROM trip_logs ORDER BY id DESC")
     List<TripLog> getAllLogs();

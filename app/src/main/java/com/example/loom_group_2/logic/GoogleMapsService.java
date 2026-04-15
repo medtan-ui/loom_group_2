@@ -33,11 +33,33 @@ public class GoogleMapsService {
         api.getDirections(origin, destination, apiKey).enqueue(callback);
     }
 
+    public void getRouteWithWaypoints(String origin, String destination, String waypoints, String apiKey, Callback<DirectionsResponse> callback) {
+        api.getDirectionsWithWaypoints(origin, destination, waypoints, apiKey).enqueue(callback);
+    }
+
+    public void searchPlaces(String query, String apiKey, Callback<PlaceSearchResponse> callback) {
+        api.searchPlaces(query, apiKey).enqueue(callback);
+    }
+
     private interface GoogleMapsApi {
         @GET("maps/api/directions/json")
         Call<DirectionsResponse> getDirections(
                 @Query("origin") String origin,
                 @Query("destination") String destination,
+                @Query("key") String apiKey
+        );
+
+        @GET("maps/api/directions/json")
+        Call<DirectionsResponse> getDirectionsWithWaypoints(
+                @Query("origin") String origin,
+                @Query("destination") String destination,
+                @Query("waypoints") String waypoints,
+                @Query("key") String apiKey
+        );
+
+        @GET("maps/api/place/textsearch/json")
+        Call<PlaceSearchResponse> searchPlaces(
+                @Query("query") String query,
                 @Query("key") String apiKey
         );
     }
@@ -75,6 +97,32 @@ public class GoogleMapsService {
         public static class OverviewPolyline {
             @SerializedName("points")
             public String points;
+        }
+    }
+
+    public static class PlaceSearchResponse {
+        @SerializedName("results")
+        public List<PlaceResult> results;
+
+        public static class PlaceResult {
+            @SerializedName("name")
+            public String name;
+            @SerializedName("formatted_address")
+            public String formattedAddress;
+            @SerializedName("geometry")
+            public Geometry geometry;
+
+            public static class Geometry {
+                @SerializedName("location")
+                public Location location;
+
+                public static class Location {
+                    @SerializedName("lat")
+                    public double lat;
+                    @SerializedName("lng")
+                    public double lng;
+                }
+            }
         }
     }
 }

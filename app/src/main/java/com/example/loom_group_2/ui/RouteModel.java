@@ -7,12 +7,21 @@ public class RouteModel {
     private int durationSeconds;
     private double distanceMeters;
     private double vehicleKpl;
+    private String polylinePoints;
 
     public RouteModel(String name, int durationSeconds, double distanceMeters, double vehicleKpl) {
         this.name = name;
         this.durationSeconds = durationSeconds;
         this.distanceMeters = distanceMeters;
         this.vehicleKpl = vehicleKpl;
+    }
+
+    public RouteModel(String name, int durationSeconds, double distanceMeters, double vehicleKpl, String polylinePoints) {
+        this.name = name;
+        this.durationSeconds = durationSeconds;
+        this.distanceMeters = distanceMeters;
+        this.vehicleKpl = vehicleKpl;
+        this.polylinePoints = polylinePoints;
     }
 
     public String getName() { return name; }
@@ -26,10 +35,16 @@ public class RouteModel {
     }
 
     public String getFuelText() {
-        // Convert meters to KM
         double distanceKm = distanceMeters / 1000.0;
-        // Calculate fuel based on vehicle efficiency
         double fuelNeeded = distanceKm / vehicleKpl;
         return String.format(Locale.US, "%.1f L", fuelNeeded);
+    }
+
+    public String getPolylinePoints() {
+        return polylinePoints;
+    }
+
+    public void setPolylinePoints(String polylinePoints) {
+        this.polylinePoints = polylinePoints;
     }
 }

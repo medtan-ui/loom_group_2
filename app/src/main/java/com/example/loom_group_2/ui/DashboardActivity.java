@@ -3,20 +3,22 @@ package com.example.loom_group_2.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -24,19 +26,14 @@ import com.example.loom_group_2.R;
 import com.example.loom_group_2.data.FirebaseUtil;
 import com.example.loom_group_2.data.Motorcycle;
 import com.example.loom_group_2.data.TripLog;
+import com.example.loom_group_2.logic.ActiveVehiclePrefs;
 import com.example.loom_group_2.logic.DataPersistenceController;
 import com.example.loom_group_2.logic.GoogleMapsService;
-import com.example.loom_group_2.logic.PolylineDecoder;
+import com.example.loom_group_2.logic.NavigationManager;
+import com.example.loom_group_2.logic.VehicleRepository;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,9 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class DashboardActivity extends AppCompatActivity implements OnMapReadyCallback, RoutesFragment.OnRouteSelectedListener {
-    private GoogleMap mMap;
-    private TextView tvGreeting, tvFuelEfficiency, tvFuelUnit, tvTimeEst, tvTripDuration;
+public class DashboardActivity extends AppCompatActivity implements RoutesFragment.OnRouteSelectedListener {
+    private TextView tvGreeting, tvFuelEfficiency, tvFuelUnit, tvTimeEst;
     private ProgressBar progressFuel, progressTime;
     private FirebaseAuth mAuth;
     private RecyclerView rvLogs;
@@ -61,7 +57,31 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     private Motorcycle currentVehicle;
     private FusedLocationProviderClient fusedLocationClient;
     private FrameLayout fragmentContainer;
-    private List<Polyline> polylines = new ArrayList<>();
+    private ActiveVehiclePrefs vehiclePrefs;
+    private VehicleRepository vehicleRepository;
+
+    // Navigation Notification
+    private CardView cardNavPopup;
+    private TextView tvNavNextTurn, tvNavDestination;
+    private ImageButton btnCancelNav;
+
+    // Next Trip Planner Views
+    private View layoutPlannedTrip;
+    private TextView tvNoTripPlanned, btnPlanTrip;
+    private ImageButton btnStartTrip, btnDeleteTrip;
+    private TextView tvPlannedDestName, tvPlannedTripStats;
+
+    // Vehicle Dashboard Card
+    private CardView cardVehicleProfile;
+    private TextView tvVehicleDashboardName, tvVehicleDashboardDetail, tvVehicleDashboardKpl, tvVehicleDashboardTrans;
+    private ImageView ivVehicleIcon;
+
+    private final ActivityResultLauncher<Intent> destinationLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                updateNavigationUI();
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,12 +91,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         mAuth = FirebaseAuth.getInstance();
         dataController = DataPersistenceController.getInstance(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        vehiclePrefs = new ActiveVehiclePrefs(this);
+        vehicleRepository = VehicleRepository.getInstance(this);
         
         tvGreeting = findViewById(R.id.tvGreeting);
         tvFuelEfficiency = findViewById(R.id.tvFuelEfficiency);
         tvFuelUnit = findViewById(R.id.tvFuelUnit);
         tvTimeEst = findViewById(R.id.tvTimeEst);
-        tvTripDuration = findViewById(R.id.tvTripDuration);
         rvLogs = findViewById(R.id.rvLogs);
         searchBar = findViewById(R.id.searchBar);
         progressFuel = findViewById(R.id.progressFuel);
@@ -86,144 +107,219 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         fabAI = findViewById(R.id.fabAI);
         fragmentContainer = findViewById(R.id.fragmentContainer);
 
+        // Navigation Notification
+        cardNavPopup = findViewById(R.id.cardNavPopup);
+        tvNavNextTurn = findViewById(R.id.tvNavNextTurn);
+        tvNavDestination = findViewById(R.id.tvNavDestination);
+        btnCancelNav = findViewById(R.id.btnCancelNav);
+
+        // Next Trip Planner
+        tvNoTripPlanned = findViewById(R.id.tvNoTripPlanned);
+        btnPlanTrip = findViewById(R.id.btnPlanTrip);
+        layoutPlannedTrip = findViewById(R.id.layoutPlannedTrip);
+        btnStartTrip = findViewById(R.id.btnStartTrip);
+        btnDeleteTrip = findViewById(R.id.btnDeleteTrip);
+        tvPlannedDestName = findViewById(R.id.tvPlannedDestName);
+        tvPlannedTripStats = findViewById(R.id.tvPlannedTripStats);
+
+        // Vehicle Card
+        cardVehicleProfile = findViewById(R.id.cardVehicleProfile);
+        tvVehicleDashboardName = findViewById(R.id.tvVehicleDashboardName);
+        tvVehicleDashboardDetail = findViewById(R.id.tvVehicleDashboardDetail);
+        tvVehicleDashboardKpl = findViewById(R.id.tvVehicleDashboardKpl);
+        tvVehicleDashboardTrans = findViewById(R.id.tvVehicleDashboardTrans);
+        ivVehicleIcon = findViewById(R.id.ivVehicleIcon);
+
         setupRecyclerView();
         updateUserInfo();
         loadRecentLogs();
         loadUserVehicle();
         
-        searchBar.setOnClickListener(v -> promptForDestination());
+        searchBar.setOnClickListener(v -> launchDestinationPicker("NAVIGATE"));
+        btnPlanTrip.setOnClickListener(v -> launchDestinationPicker("PLAN"));
+
+        btnStartTrip.setOnClickListener(v -> {
+            NavigationManager.getInstance().startNavigationFromPlan();
+            startActivity(new Intent(this, NavigationActivity.class));
+            updateNavigationUI();
+        });
+
+        btnDeleteTrip.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Trip Plan")
+                    .setMessage("Are you sure you want to delete your planned trip?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        NavigationManager.getInstance().stopPlan();
+                        updateNavigationUI();
+                        Toast.makeText(this, "Trip Plan Deleted", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
+        cardVehicleProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         btnViewAllLogs.setOnClickListener(v -> startActivity(new Intent(this, LogsActivity.class)));
         fabAI.setOnClickListener(v -> startActivity(new Intent(this, AIChatActivity.class)));
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapFragment);
-        if (mapFragment != null) mapFragment.getMapAsync(this);
+        cardNavPopup.setOnClickListener(v -> {
+            startActivity(new Intent(this, NavigationActivity.class));
+        });
+
+        btnCancelNav.setOnClickListener(v -> {
+            NavigationManager.getInstance().stopNavigation();
+            updateNavigationUI();
+            Toast.makeText(this, "Navigation Cancelled", Toast.LENGTH_SHORT).show();
+        });
     }
 
-    private void promptForDestination() {
+    private void launchDestinationPicker(String mode) {
+        if (currentVehicle == null) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Vehicle Required")
+                    .setMessage("You must choose a vehicle in your profile first before you can plan a trip.")
+                    .setPositiveButton("Go to Profile", (dialog, which) -> {
+                        startActivity(new Intent(this, ProfileActivity.class));
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            return;
+        }
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
             return;
         }
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            String originStr = "";
             if (location != null) {
-                String origin = location.getLatitude() + "," + location.getLongitude();
-                showDestinationInputDialog(origin);
-            } else {
-                Toast.makeText(this, "Could not get current location", Toast.LENGTH_SHORT).show();
+                originStr = location.getLatitude() + "," + location.getLongitude();
             }
+            Intent intent = new Intent(this, DestinationActivity.class);
+            intent.putExtra("origin", originStr);
+            intent.putExtra("mode", mode);
+            destinationLauncher.launch(intent);
         });
     }
 
-    private void showDestinationInputDialog(String origin) {
-        EditText input = new EditText(this);
-        input.setHint("Enter destination");
-        new AlertDialog.Builder(this)
-                .setTitle("Plan Route")
-                .setView(input)
-                .setPositiveButton("Search", (dialog, which) -> {
-                    String destination = input.getText().toString();
-                    if (!destination.isEmpty()) {
-                        showRoutesFragment(origin, destination);
-                    }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
+    private void updateNavigationUI() {
+        NavigationManager navManager = NavigationManager.getInstance();
+        boolean isNavigating = navManager.isNavigating();
+        boolean isPlanned = navManager.isPlanned();
 
-    private void showRoutesFragment(String origin, String destination) {
-        fragmentContainer.setVisibility(View.VISIBLE);
-        RoutesFragment fragment = new RoutesFragment();
-        Bundle args = new Bundle();
-        args.putString("origin", origin);
-        args.putString("destination", destination);
-        fragment.setArguments(args);
-        fragment.setOnRouteSelectedListener(this);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragmentContainer, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    @Override
-    public void onRoutesFetched(GoogleMapsService.DirectionsResponse response, Motorcycle vehicle) {
-        if (mMap == null) return;
-        
-        for (Polyline p : polylines) p.remove();
-        polylines.clear();
-
-        if (response.routes == null || response.routes.isEmpty()) return;
-
-        LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
-        for (int i = 0; i < response.routes.size(); i++) {
-            GoogleMapsService.DirectionsResponse.Route route = response.routes.get(i);
-            List<LatLng> decodedPath = PolylineDecoder.decodePoly(route.overviewPolyline.points);
-            
-            PolylineOptions polyOptions = new PolylineOptions()
-                    .addAll(decodedPath)
-                    .color(i == 0 ? Color.BLUE : Color.GRAY)
-                    .width(10);
-            polylines.add(mMap.addPolyline(polyOptions));
-            
-            for (LatLng point : decodedPath) boundsBuilder.include(point);
+        // 1. Navigation Notification
+        if (isNavigating) {
+            cardNavPopup.setVisibility(View.VISIBLE);
+            tvNavDestination.setText("To: " + navManager.getActiveDestName());
+            tvNavNextTurn.setText("Navigating...");
+        } else {
+            cardNavPopup.setVisibility(View.GONE);
         }
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 100));
+        // 2. Next Trip Planner Card
+        if (isPlanned) {
+            tvNoTripPlanned.setVisibility(View.GONE);
+            layoutPlannedTrip.setVisibility(View.VISIBLE);
+            tvPlannedDestName.setText(navManager.getPlannedDestName());
+
+            RouteModel route = navManager.getPlannedRoute();
+            if (route != null) {
+                tvPlannedTripStats.setText(route.getDistanceText() + " • " + route.getDurationText());
+            }
+        } else {
+            tvNoTripPlanned.setVisibility(View.VISIBLE);
+            layoutPlannedTrip.setVisibility(View.GONE);
+        }
+
+        // 3. Stats respond to what's currently active (Navigating priority, then Planned)
+        RouteModel activeDisplayRoute = isNavigating ? navManager.getActiveRoute() : (isPlanned ? navManager.getPlannedRoute() : null);
         
-        // Update stats with the primary route
-        if (!response.routes.isEmpty()) {
-            GoogleMapsService.DirectionsResponse.Leg leg = response.routes.get(0).legs.get(0);
-            updateTripStats(leg.distance.value / 1000.0, leg.duration.value / 60);
+        if (activeDisplayRoute != null) {
+            tvFuelEfficiency.setText(activeDisplayRoute.getFuelText().replace(" L", ""));
+            tvFuelUnit.setText(getString(R.string.fuel_unit_liters));
+            tvTimeEst.setText(activeDisplayRoute.getDurationText().replace(" mins", ""));
+            progressFuel.setProgress(50);
+            progressTime.setProgress(50);
+        } else {
+            tvFuelEfficiency.setText(getString(R.string.dash_placeholder));
+            tvTimeEst.setText(getString(R.string.dash_placeholder));
+            progressFuel.setProgress(0);
+            progressTime.setProgress(0);
         }
     }
 
     @Override
-    public void onRouteClicked(int position) {
-
-    }
-
-    private void updateTripStats(double distanceKm, int durationMins) {
-        if (currentVehicle != null) {
-            double fuelNeeded = distanceKm / currentVehicle.getKpl();
-            tvTimeEst.setText(String.valueOf(durationMins));
-            tvTripDuration.setText(durationMins + " min");
-            tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", fuelNeeded));
-            tvFuelUnit.setText(R.string.fuel_unit_liters);
-
-            progressFuel.setProgress((int) Math.min(100, (fuelNeeded * 20))); // Scaled for better visualization
-            progressTime.setProgress(Math.min(100, durationMins));
-        }
-    }
+    public void onRoutesFetched(GoogleMapsService.DirectionsResponse response, Motorcycle vehicle) { }
 
     @Override
-    public void onStartNavigation(RouteModel selectedRoute) {
-        fragmentContainer.setVisibility(View.GONE);
-        getSupportFragmentManager().popBackStack();
-        Toast.makeText(this, "Starting navigation to " + selectedRoute.getName(), Toast.LENGTH_SHORT).show();
-        
-        // Log the trip
-        String date = java.text.DateFormat.getDateInstance().format(new java.util.Date());
-        TripLog newLog = new TripLog(date, "Route: " + selectedRoute.getName(), 
-                selectedRoute.getDurationText(), selectedRoute.getFuelText(), selectedRoute.getDistanceText());
-        dataController.addTripLog(newLog, this::loadRecentLogs);
-    }
+    public void onRouteClicked(int position) { }
+
+    @Override
+    public void onStartNavigation(RouteModel selectedRoute, String destinationName, String destinationCoord, List<String> waypoints) { }
 
     private void loadUserVehicle() {
-        FirebaseUtil.getUserVehicle(motorcycle -> {
-            if (motorcycle != null) {
-                this.currentVehicle = motorcycle;
-                if (tvFuelUnit != null && tvFuelUnit.getText().equals(getString(R.string.fuel_unit_kpl))) {
-                    tvFuelEfficiency.setText(String.format(Locale.US, "%.1f", motorcycle.getKpl()));
-                }
-            }
-        });
+        if (!vehiclePrefs.hasActiveVehicle()) {
+            this.currentVehicle = null;
+            updateVehicleDashboardUI(null);
+            return;
+        }
+
+        String source = vehiclePrefs.getActiveSource();
+        if ("room".equals(source)) {
+            int id = vehiclePrefs.getActiveVehicleId();
+            vehicleRepository.getVehicleById(id, vehicle -> {
+                runOnUiThread(() -> {
+                    this.currentVehicle = vehicle;
+                    updateVehicleDashboardUI(vehicle);
+                });
+            });
+        } else if ("firestore".equals(source)) {
+            FirebaseUtil.getUserVehicle(motorcycle -> {
+                runOnUiThread(() -> {
+                    this.currentVehicle = motorcycle;
+                    updateVehicleDashboardUI(motorcycle);
+                });
+            });
+        }
+    }
+
+    private void updateVehicleDashboardUI(Motorcycle vehicle) {
+        if (vehicle != null) {
+            tvVehicleDashboardName.setText(String.format(Locale.US, "%s (%d)", vehicle.getModel(), vehicle.getYear()));
+            tvVehicleDashboardDetail.setText(vehicle.getMake());
+            tvVehicleDashboardKpl.setText(String.format(Locale.US, "%.1f km/L", vehicle.getKpl()));
+            tvVehicleDashboardTrans.setText(vehicle.getTransmission() != null ? vehicle.getTransmission() : "Manual");
+            ivVehicleIcon.setImageResource(R.drawable.ic_car);
+        } else {
+            tvVehicleDashboardName.setText("No Vehicle Selected");
+            tvVehicleDashboardDetail.setText("Tap to select in profile");
+            tvVehicleDashboardKpl.setText("-- km/L");
+            tvVehicleDashboardTrans.setText("--");
+            ivVehicleIcon.setImageResource(R.drawable.ic_road);
+        }
     }
 
     private void setupRecyclerView() {
         rvLogs.setLayoutManager(new LinearLayoutManager(this));
         logAdapter = new LogAdapter(tripLogs);
+        logAdapter.setOnLogDeleteListener((log, position) -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Log")
+                    .setMessage("Are you sure you want to delete this trip log?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        dataController.deleteTripLog(log, () -> {
+                            runOnUiThread(() -> {
+                                tripLogs.remove(position);
+                                logAdapter.notifyItemRemoved(position);
+                                logAdapter.notifyItemRangeChanged(position, tripLogs.size());
+                                Toast.makeText(this, "Log Deleted", Toast.LENGTH_SHORT).show();
+                            });
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
         rvLogs.setAdapter(logAdapter);
     }
 
@@ -254,25 +350,17 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mMap.setMyLocationEnabled(true);
-        }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(14.6253, 121.0619), 15f));
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         loadUserVehicle();
+        updateNavigationUI();
+        loadRecentLogs();
     }
 
     @Override
     public void onBackPressed() {
         if (fragmentContainer.getVisibility() == View.VISIBLE) {
             fragmentContainer.setVisibility(View.GONE);
-            super.onBackPressed();
         } else {
             super.onBackPressed();
         }

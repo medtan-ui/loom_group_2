@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="@string/placeholder_road"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -25,9 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
+        android:textColor="@color/text_secondary"
         android:text="@string/placeholder_time"
         android:textSize="14sp"
-        app:drawableStartCompat="@drawable/ic_road" />
+        app:drawableStartCompat="@drawable/ic_road"
+        app:drawableTint="@color/text_secondary" />
 
     <TextView
         android:id="@+id/tvRouteFuel"
@@ -35,8 +37,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:drawablePadding="4dp"
+        android:textColor="@color/text_secondary"
         android:text="@string/placeholder_fuel"
         android:textSize="14sp"
-        app:drawableStartCompat="@drawable/ic_gas" />
+        app:drawableStartCompat="@drawable/ic_gas"
+        app:drawableTint="@color/text_secondary" />
 
 </LinearLayout>

@@ -4,20 +4,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    app:cardCornerRadius="15dp"
-    app:cardElevation="2dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/card_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:gravity="center_vertical">
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@android:drawable/ic_menu_directions"
-            app:tint="#FFCC3F" />
+        <View
+            android:layout_width="4dp"
+            android:layout_height="40dp"
+            android:background="@color/yellow" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -30,52 +31,60 @@
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/placeholder_date"
-                android:textSize="10sp"
-                android:textColor="#BCBCBC" />
+                android:text="October 24, 2023"
+                android:textSize="12sp"
+                android:textColor="@color/light_grey" />
 
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/placeholder_route"
+                android:text="To: Manila"
                 android:textStyle="bold"
-                android:textColor="#566573" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
-
-            <TextView
-                android:id="@+id/tvDistance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0.0 km"
-                android:textSize="11sp"
-                android:textColor="#BCBCBC" />
+                android:textSize="16sp"
+                android:textColor="@color/text_primary" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDistance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dist: 12.5 km"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginEnd="12dp" />
 
                 <TextView
                     android:id="@+id/tvTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_time"
-                    android:layout_marginEnd="8dp"/>
+                    android:text="Time: 45 mins"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginEnd="12dp" />
 
                 <TextView
                     android:id="@+id/tvFuel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/placeholder_fuel"
+                    android:text="Fuel Consumed: 2.1 L"
+                    android:textSize="12sp"
+                    android:textColor="@color/yellow"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeleteLog"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="#E74C3C" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

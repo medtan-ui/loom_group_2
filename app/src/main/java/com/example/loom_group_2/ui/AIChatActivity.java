@@ -27,13 +27,19 @@ public class AIChatActivity extends AppCompatActivity {
     private ChatAdapter adapter;
     private List<ChatMessage> messages = new ArrayList<>();
     private GenerativeModelFutures model;
+    
+    // Limits to prevent overloading
+    private int userMessageCount = 0;
+    private static final int MAX_MESSAGES_PER_SESSION = 10;
+    private static final int MAX_CHAR_LIMIT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ai_chat);
 
-        GenerativeModel baseModel = FirebaseAI.getInstance().generativeModel("gemini-3-flash-preview");
+        // Using Gemini 2.5 Flash Lite as requested
+        GenerativeModel baseModel = FirebaseAI.getInstance().generativeModel("gemini-2.5-flash-lite");
         model = GenerativeModelFutures.from(baseModel);
 
         rvChat = findViewById(R.id.rvChat);
@@ -47,7 +53,7 @@ public class AIChatActivity extends AppCompatActivity {
 
         // Welcome message (motorcycle trip focused)
         if (messages.isEmpty()) {
-            messages.add(new ChatMessage("Hi Rider! I'm Loom AI. Ask me about fuel efficiency, route planning, trip logs, motorcycle maintenance, or anything else!", false));
+            messages.add(new ChatMessage("Hi Rider! I'm Loom AI. Ask me about your Loom trips, fuel efficiency, destinations, or distance logging!", false));
             adapter.notifyItemInserted(0);
         }
 
@@ -59,6 +65,23 @@ public class AIChatActivity extends AppCompatActivity {
         String userMessage = etMessage.getText().toString().trim();
         if (userMessage.isEmpty()) return;
 
+        // Check character limit
+        if (userMessage.length() > MAX_CHAR_LIMIT) {
+            messages.add(new ChatMessage("Loom AI: Your message is too long. Please keep it under 200 characters.", false));
+            adapter.notifyItemInserted(messages.size() - 1);
+            rvChat.scrollToPosition(messages.size() - 1);
+            return;
+        }
+
+        // Check session message limit
+        if (userMessageCount >= MAX_MESSAGES_PER_SESSION) {
+            messages.add(new ChatMessage("Loom AI: You've reached the message limit for this session. Please return later!", false));
+            adapter.notifyItemInserted(messages.size() - 1);
+            rvChat.scrollToPosition(messages.size() - 1);
+            return;
+        }
+
+        userMessageCount++;
         messages.add(new ChatMessage(userMessage, true));
         adapter.notifyItemInserted(messages.size() - 1);
         rvChat.scrollToPosition(messages.size() - 1);
@@ -71,9 +94,15 @@ public class AIChatActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                String enhancedPrompt = "You are Loom AI, a helpful assistant for all vehicle riders and trip logging. "
-                        + "The user is using the Loom app for trip management, fuel calculation, and route planning. "
-                        + "Be friendly, practical, and give useful advice for riders. User message: " + userMessage;
+                // Strict Prompt Engineering
+                String systemInstruction = "You are Loom AI, the official assistant for the Loom App. "
+                        + "The Loom app is designed for motorcycle riders to log trips, plan routes, track destinations, calculate travel distances, and monitor average fuel consumption. "
+                        + "Your ONLY purpose is to answer questions related to the Loom app and motorcycle trip management. "
+                        + "STRICT RULE: If a user asks about anything unrelated to Loom app features or motorcycle trips (e.g., math, science, history, general knowledge, or 'the value of pi'), "
+                        + "you MUST politely decline and state: 'I am sorry, but I can only assist with Loom-related trip and motorcycle queries.' "
+                        + "Be concise, helpful, and rider-focused. ";
+
+                String enhancedPrompt = systemInstruction + "\n\nUser Question: " + userMessage;
 
                 Content prompt = new Content.Builder()
                         .addPart(new TextPart(enhancedPrompt))

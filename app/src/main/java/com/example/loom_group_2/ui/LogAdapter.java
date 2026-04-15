@@ -3,6 +3,7 @@ package com.example.loom_group_2.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,7 +13,19 @@ import java.util.List;
 
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     private List<TripLog> logList;
-    public LogAdapter(List<TripLog> logList) { this.logList = logList; }
+    private OnLogDeleteListener deleteListener;
+
+    public interface OnLogDeleteListener {
+        void onLogDelete(TripLog log, int position);
+    }
+
+    public LogAdapter(List<TripLog> logList) { 
+        this.logList = logList; 
+    }
+
+    public void setOnLogDeleteListener(OnLogDeleteListener listener) {
+        this.deleteListener = listener;
+    }
 
     @NonNull
     @Override
@@ -26,9 +39,15 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
         TripLog log = logList.get(position);
         holder.tvDate.setText(log.getDate());
         holder.tvTitle.setText(log.getTitle());
-        holder.tvTime.setText(log.getTime());
-        holder.tvFuel.setText(log.getFuel());
-        holder.tvDistance.setText(log.getDistance());
+        holder.tvTime.setText("Time: " + log.getTime());
+        holder.tvFuel.setText("Fuel: " + log.getFuel());
+        holder.tvDistance.setText("Dist: " + log.getDistance());
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onLogDelete(log, position);
+            }
+        });
     }
 
     @Override
@@ -36,6 +55,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
     public static class LogViewHolder extends RecyclerView.ViewHolder {
         TextView tvDate, tvTitle, tvTime, tvFuel, tvDistance;
+        ImageButton btnDelete;
         public LogViewHolder(@NonNull View itemView) {
             super(itemView);
             tvDate = itemView.findViewById(R.id.tvDate);
@@ -43,6 +63,7 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
             tvTime = itemView.findViewById(R.id.tvTime);
             tvFuel = itemView.findViewById(R.id.tvFuel);
             tvDistance = itemView.findViewById(R.id.tvDistance);
+            btnDelete = itemView.findViewById(R.id.btnDeleteLog);
         }
     }
 }

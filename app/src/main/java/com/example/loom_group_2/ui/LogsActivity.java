@@ -2,6 +2,8 @@ package com.example.loom_group_2.ui;
 
 import android.os.Bundle;
 import android.widget.ImageButton;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +32,25 @@ public class LogsActivity extends AppCompatActivity {
 
         rvAllLogs.setLayoutManager(new LinearLayoutManager(this));
         logAdapter = new LogAdapter(tripLogs);
+        
+        logAdapter.setOnLogDeleteListener((log, position) -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Log")
+                    .setMessage("Are you sure you want to delete this trip log?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        dataController.deleteTripLog(log, () -> {
+                            runOnUiThread(() -> {
+                                tripLogs.remove(position);
+                                logAdapter.notifyItemRemoved(position);
+                                logAdapter.notifyItemRangeChanged(position, tripLogs.size());
+                                Toast.makeText(this, "Log Deleted", Toast.LENGTH_SHORT).show();
+                            });
+                        });
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         rvAllLogs.setAdapter(logAdapter);
 
         loadAllLogs();

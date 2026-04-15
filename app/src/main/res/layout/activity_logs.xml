@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8F9F9"
+    android:background="@color/bg_dashboard"
     android:padding="20dp">
 
     <ImageButton
@@ -12,7 +12,7 @@
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_revert"
-        app:tint="#FFCC3F"
+        app:tint="@color/yellow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -23,7 +23,7 @@
         android:layout_marginStart="8dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/logo_name"
-        android:textColor="#FFCC3F"
+        android:textColor="@color/yellow"
         android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/btnBackLogs"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/all_travel_logs"
-        android:textColor="#566573"
+        android:textColor="@color/text_primary"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"

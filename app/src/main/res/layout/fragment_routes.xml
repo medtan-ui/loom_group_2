@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="@android:color/white">
+    android:background="@color/card_bg">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,17 +19,17 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
+            android:contentDescription="@string/back"
             android:padding="8dp"
             android:src="@android:drawable/ic_menu_revert"
-            app:tint="#FFCC3F" />
+            app:tint="@color/yellow" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/routes_title"
-            android:textColor="#444444"
+            android:textColor="@color/text_primary"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="12dp"
-        android:backgroundTint="#FFCC3F"
+        android:backgroundTint="@color/yellow"
         android:text="@string/start_navigation"
         android:textAllCaps="false"
         android:textColor="#605520"
