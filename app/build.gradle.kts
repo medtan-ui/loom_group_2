@@ -47,7 +47,11 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.firebase.ui.auth)
-    
+
+    // AI
+    implementation(libs.firebase.ai)
+    implementation(libs.guava)
+
     // Glide
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)

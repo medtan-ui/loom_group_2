@@ -27,6 +27,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
+    private static final String ALLOWED_DOMAIN = "@tip.edu.ph";
+    
     private EditText etEmail, etPassword;
     private Button btnLogin;
     private SignInButton btnGoogleSignIn;
@@ -43,11 +45,17 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            if (currentUser.isEmailVerified()) {
-                startActivity(new Intent(this, DashboardActivity.class));
-                finish();
+            // Extra check for existing sessions
+            String email = currentUser.getEmail();
+            if (email != null && email.toLowerCase().endsWith(ALLOWED_DOMAIN)) {
+                if (currentUser.isEmailVerified()) {
+                    startActivity(new Intent(this, DashboardActivity.class));
+                    finish();
+                } else {
+                    checkStaleAccount(currentUser);
+                }
             } else {
-                checkStaleAccount(currentUser);
+                mAuth.signOut();
             }
         }
 
@@ -80,13 +88,11 @@ public class MainActivity extends AppCompatActivity {
         long tenMinutesInMillis = 10 * 60 * 1000;
 
         if (currentTime - creationTime > tenMinutesInMillis) {
-            // Account is older than 10 mins and still unverified. Delete it.
             user.delete().addOnCompleteListener(task -> {
                 mAuth.signOut();
                 Toast.makeText(MainActivity.this, "Verification period expired. Account deleted.", Toast.LENGTH_LONG).show();
             });
         } else {
-            // Still in the window, but we sign them out to force a fresh login/verification check
             mAuth.signOut();
         }
     }
@@ -107,7 +113,13 @@ public class MainActivity extends AppCompatActivity {
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 if (account != null) {
-                    firebaseAuthWithGoogle(account.getIdToken());
+                    String email = account.getEmail();
+                    if (email != null && email.toLowerCase().endsWith(ALLOWED_DOMAIN)) {
+                        firebaseAuthWithGoogle(account.getIdToken());
+                    } else {
+                        mGoogleSignInClient.signOut();
+                        Toast.makeText(this, "Only " + ALLOWED_DOMAIN + " emails are allowed.", Toast.LENGTH_LONG).show();
+                    }
                 }
             } catch (ApiException e) {
             }
@@ -148,6 +160,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        if (!email.toLowerCase().endsWith(ALLOWED_DOMAIN)) {
+            Toast.makeText(this, "Only " + ALLOWED_DOMAIN + " emails are allowed.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 FirebaseUser user = mAuth.getCurrentUser();
@@ -156,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(this, DashboardActivity.class));
                         finish();
                     } else {
-                        // Check if it's stale before signing them out
                         long creationTime = user.getMetadata().getCreationTimestamp();
                         if (System.currentTimeMillis() - creationTime > (10 * 60 * 1000)) {
                             user.delete().addOnCompleteListener(t -> {

@@ -26,7 +26,8 @@
         android:layout_height="wrap_content"
         android:drawablePadding="4dp"
         android:text="@string/placeholder_time"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_road" />
 
     <TextView
         android:id="@+id/tvRouteFuel"
@@ -35,6 +36,7 @@
         android:layout_marginStart="12dp"
         android:drawablePadding="4dp"
         android:text="@string/placeholder_fuel"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        app:drawableStartCompat="@drawable/ic_gas" />
 
 </LinearLayout>
