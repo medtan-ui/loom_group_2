@@ -16,4 +16,7 @@ public interface TripDao {
 
     @Query("SELECT * FROM trip_logs ORDER BY id DESC")
     List<TripLog> getAllLogs();
+
+    @Query("DELETE FROM trip_logs WHERE id = :id")
+    void deleteById(int id);
 }

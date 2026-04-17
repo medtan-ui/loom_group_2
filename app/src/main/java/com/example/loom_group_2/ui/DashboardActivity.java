@@ -306,18 +306,25 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
     private void setupRecyclerView() {
         rvLogs.setLayoutManager(new LinearLayoutManager(this));
         logAdapter = new LogAdapter(tripLogs);
+        
+        logAdapter.setOnItemLongClickListener(log -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Delete Log")
+                .setMessage("Delete this trip log?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    dataController.deleteTripLog(log.getId(), () -> runOnUiThread(this::loadRecentLogs));
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+        });
+
         logAdapter.setOnLogDeleteListener((log, position) -> {
             new AlertDialog.Builder(this)
                     .setTitle("Delete Log")
                     .setMessage("Are you sure you want to delete this trip log?")
                     .setPositiveButton("Delete", (dialog, which) -> {
                         dataController.deleteTripLog(log, () -> {
-                            runOnUiThread(() -> {
-                                tripLogs.remove(position);
-                                logAdapter.notifyItemRemoved(position);
-                                logAdapter.notifyItemRangeChanged(position, tripLogs.size());
-                                Toast.makeText(this, "Log Deleted", Toast.LENGTH_SHORT).show();
-                            });
+                            runOnUiThread(this::loadRecentLogs);
                         });
                     })
                     .setNegativeButton("Cancel", null)

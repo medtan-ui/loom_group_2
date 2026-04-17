@@ -14,9 +14,14 @@ import java.util.List;
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     private List<TripLog> logList;
     private OnLogDeleteListener deleteListener;
+    private OnItemLongClickListener longClickListener;
 
     public interface OnLogDeleteListener {
         void onLogDelete(TripLog log, int position);
+    }
+
+    public interface OnItemLongClickListener {
+        void onLongClick(TripLog log);
     }
 
     public LogAdapter(List<TripLog> logList) { 
@@ -25,6 +30,10 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
 
     public void setOnLogDeleteListener(OnLogDeleteListener listener) {
         this.deleteListener = listener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener) {
+        this.longClickListener = listener;
     }
 
     @NonNull
@@ -47,6 +56,14 @@ public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
             if (deleteListener != null) {
                 deleteListener.onLogDelete(log, position);
             }
+        });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (longClickListener != null) {
+                longClickListener.onLongClick(log);
+                return true;
+            }
+            return false;
         });
     }
 

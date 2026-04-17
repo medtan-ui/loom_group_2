@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dashboard">
+    android:background="@color/loom_background">
 
     <ScrollView
         android:id="@+id/dashboardScrollView"
@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:text="@string/hello"
-                android:textColor="@color/yellow"
+                android:textColor="@color/loom_yellow"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/ivProfile"
@@ -42,7 +42,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:shapeAppearanceOverlay="@style/CircleImage"
-                app:strokeColor="@color/yellow"
+                app:strokeColor="@color/loom_yellow"
                 app:strokeWidth="2dp" />
 
             <androidx.constraintlayout.widget.Barrier
@@ -71,7 +71,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@android:drawable/ic_menu_mylocation"
-                    app:tint="@color/yellow" />
+                    app:tint="@color/loom_yellow" />
 
                 <TextView
                     android:id="@+id/tvSearchPlaceholder"
@@ -79,19 +79,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="@string/select_destination"
-                    android:textColor="@color/light_grey"
+                    android:textColor="@color/loom_hint_text"
                     android:textSize="14sp" />
             </LinearLayout>
 
             <!-- Vehicle Profile Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardVehicleProfile"
+                style="@style/LoomCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                app:cardBackgroundColor="@color/card_bg"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
                 app:layout_constraintTop_toBottomOf="@+id/searchBar">
 
                 <LinearLayout
@@ -104,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ACTIVE VEHICLE"
-                        android:textColor="@color/yellow"
+                        android:textColor="@color/loom_yellow"
                         android:textSize="10sp"
                         android:textStyle="bold"
                         android:letterSpacing="0.1"
@@ -121,7 +119,7 @@
                             android:layout_width="48dp"
                             android:layout_height="48dp"
                             android:src="@drawable/ic_road"
-                            app:tint="@color/yellow" />
+                            app:tint="@color/loom_yellow" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -135,14 +133,14 @@
                                 android:layout_height="wrap_content"
                                 android:text="Model &amp; Year"
                                 android:textSize="10sp"
-                                android:textColor="@color/light_grey" />
+                                android:textColor="@color/loom_hint_text" />
 
                             <TextView
                                 android:id="@+id/tvVehicleDashboardName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="No Vehicle Selected"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/loom_dark_text"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -152,14 +150,14 @@
                                 android:layout_marginTop="4dp"
                                 android:text="Manufacturer"
                                 android:textSize="10sp"
-                                android:textColor="@color/light_grey" />
+                                android:textColor="@color/loom_hint_text" />
 
                             <TextView
                                 android:id="@+id/tvVehicleDashboardDetail"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Tap to select in profile"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/loom_dark_text"
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
@@ -169,7 +167,7 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#1A000000" />
+                        android:background="@color/loom_divider" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -187,14 +185,14 @@
                                 android:layout_height="wrap_content"
                                 android:text="Fuel Consumption"
                                 android:textSize="10sp"
-                                android:textColor="@color/light_grey"/>
+                                android:textColor="@color/loom_hint_text"/>
                             <TextView
                                 android:id="@+id/tvVehicleDashboardKpl"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="-- km/L"
                                 android:textStyle="bold"
-                                android:textColor="@color/text_primary"/>
+                                android:textColor="@color/loom_dark_text"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -207,14 +205,14 @@
                                 android:layout_height="wrap_content"
                                 android:text="Transmission"
                                 android:textSize="10sp"
-                                android:textColor="@color/light_grey"/>
+                                android:textColor="@color/loom_hint_text"/>
                             <TextView
                                 android:id="@+id/tvVehicleDashboardTrans"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
                                 android:textStyle="bold"
-                                android:textColor="@color/text_primary"/>
+                                android:textColor="@color/loom_dark_text"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -223,13 +221,12 @@
             <!-- Navigation Notification Popup (When active) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardNavPopup"
+                style="@style/LoomCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:visibility="gone"
-                app:cardBackgroundColor="@color/yellow"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/loom_yellow"
                 app:layout_constraintTop_toBottomOf="@+id/cardVehicleProfile">
 
                 <LinearLayout
@@ -277,18 +274,16 @@
                         android:layout_height="40dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:src="@android:drawable/ic_menu_close_clear_cancel"
-                        app:tint="#E74C3C" />
+                        app:tint="@color/loom_error" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardNextTrip"
+                style="@style/LoomCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                app:cardBackgroundColor="@color/card_bg"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/cardNavPopup">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -301,7 +296,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/next_trip"
-                        android:textColor="@color/yellow"
+                        android:textColor="@color/loom_yellow"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -312,7 +307,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Add Next Trip"
-                        android:textColor="@color/yellow"
+                        android:textColor="@color/loom_yellow"
                         android:textStyle="bold"
                         android:textSize="14sp"
                         android:clickable="true"
@@ -326,7 +321,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="12dp"
-                        android:background="#F2F3F4"
+                        android:background="@color/loom_divider"
                         app:layout_constraintTop_toBottomOf="@+id/labelNextTrip" />
 
                     <!-- No Trip Placeholder -->
@@ -337,7 +332,7 @@
                         android:layout_marginTop="24dp"
                         android:layout_marginBottom="24dp"
                         android:text="No trip planned yet"
-                        android:textColor="@color/light_grey"
+                        android:textColor="@color/loom_hint_text"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -358,7 +353,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@android:drawable/ic_menu_directions"
-                            app:tint="@color/yellow" />
+                            app:tint="@color/loom_yellow" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -374,7 +369,7 @@
                                 android:ellipsize="end"
                                 android:maxLines="1"
                                 android:text="Destination Name"
-                                android:textColor="@color/text_primary"
+                                android:textColor="@color/loom_dark_text"
                                 android:textStyle="bold" />
 
                             <TextView
@@ -382,7 +377,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="0.0 km • 0 mins"
-                                android:textColor="@color/light_grey"
+                                android:textColor="@color/loom_hint_text"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -392,7 +387,7 @@
                             android:layout_height="40dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@android:drawable/ic_media_play"
-                            app:tint="@color/yellow" />
+                            app:tint="@color/loom_yellow" />
 
                         <ImageButton
                             android:id="@+id/btnDeleteTrip"
@@ -401,7 +396,7 @@
                             android:layout_marginStart="8dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@android:drawable/ic_menu_close_clear_cancel"
-                            app:tint="#E74C3C" />
+                            app:tint="@color/loom_error" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -412,7 +407,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:text="ESTIMATES FOR NEXT TRIP"
-                android:textColor="@color/yellow"
+                android:textColor="@color/loom_yellow"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"
@@ -429,13 +424,11 @@
                 app:layout_constraintTop_toBottomOf="@+id/tvTripEstimatesLabel">
 
                 <androidx.cardview.widget.CardView
+                    style="@style/LoomCard"
                     android:layout_width="0dp"
                     android:layout_height="180dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/card_bg"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="6dp">
+                    android:layout_weight="1">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -464,7 +457,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/dash_placeholder"
-                                android:textColor="@color/yellow"
+                                android:textColor="@color/loom_yellow"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
 
@@ -473,7 +466,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/fuel_unit_liters"
-                                android:textColor="@color/yellow"
+                                android:textColor="@color/loom_yellow"
                                 android:textSize="10sp" />
                         </LinearLayout>
 
@@ -484,20 +477,18 @@
                             android:layout_alignParentBottom="true"
                             android:layout_centerHorizontal="true"
                             android:text="@string/fuel_est_label"
-                            android:textColor="@color/yellow"
+                            android:textColor="@color/loom_yellow"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
+                    style="@style/LoomCard"
                     android:layout_width="0dp"
                     android:layout_height="180dp"
                     android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    app:cardBackgroundColor="@color/card_bg"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="6dp">
+                    android:layout_weight="1">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -525,10 +516,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/dash_placeholder"
-                                android:textColor="@color/yellow"
+                                android:textColor="@color/loom_yellow"
                                 android:textSize="22sp"
                                 android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="mins" android:textColor="@color/yellow" android:textSize="10sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="mins" android:textColor="@color/loom_yellow" android:textSize="10sp" />
                         </LinearLayout>
 
                         <TextView
@@ -538,7 +529,7 @@
                             android:layout_alignParentBottom="true"
                             android:layout_centerHorizontal="true"
                             android:text="@string/time_est_label"
-                            android:textColor="@color/yellow"
+                            android:textColor="@color/loom_yellow"
                             android:textSize="11sp"
                             android:textStyle="bold" />
                     </RelativeLayout>
@@ -560,7 +551,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/recent_logs"
-                    android:textColor="@color/yellow"
+                    android:textColor="@color/loom_yellow"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -569,10 +560,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
-                    android:text="Fuel Refills"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
+                    android:text="⛽ Fuel Refills"
+                    android:textColor="@color/loom_yellow"
+                    android:textSize="13sp"
                     android:textStyle="bold"
+                    android:padding="8dp"
+                    android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true" />
 
@@ -581,7 +574,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/view_all"
-                    android:textColor="@color/yellow"
+                    android:textColor="@color/loom_yellow"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:clickable="true"
@@ -604,7 +597,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:elevation="10dp"
-        android:background="@color/bg_dashboard"
+        android:background="@color/loom_background"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -619,7 +612,7 @@
         android:src="@drawable/ic_chat"
         android:clickable="true"
         android:focusable="true"
-        app:backgroundTint="@color/yellow"
+        app:backgroundTint="@color/loom_yellow"
         app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

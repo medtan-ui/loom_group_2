@@ -1,14 +1,25 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Loom" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Base.Theme.Loom_group_2" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/loom_yellow</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/loom_yellow</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:windowBackground">@color/loom_background</item>
+        <item name="colorSurface">@color/loom_surface</item>
+        <item name="colorOnSurface">@color/loom_on_surface</item>
+        <item name="android:textColorPrimary">@color/loom_dark_text</item>
+        <item name="android:textColorSecondary">@color/loom_medium_text</item>
     </style>
-
-    <style name="Theme.Loom" parent="Base.Theme.Loom" />
-
-    <style name="CircleImage">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50%</item>
+    <style name="Theme.Loom_group_2" parent="Base.Theme.Loom_group_2" />
+    <style name="LoomCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">6dp</item>
+        <item name="cardBackgroundColor">@color/loom_card</item>
+    </style>
+    <style name="LoomInput" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/loom_yellow</item>
+        <item name="hintTextColor">@color/loom_yellow</item>
+        <item name="android:textColorHint">@color/loom_hint_text</item>
     </style>
 </resources>
