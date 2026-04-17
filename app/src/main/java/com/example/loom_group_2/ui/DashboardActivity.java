@@ -53,9 +53,8 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
     private LinearLayout searchBar;
     private ShapeableImageView ivProfile;
     private TextView btnViewAllLogs;
+    private TextView btnFuelRefill;
     private FloatingActionButton fabAI;
-    private Motorcycle currentVehicle;
-    private FusedLocationProviderClient fusedLocationClient;
     private FrameLayout fragmentContainer;
     private ActiveVehiclePrefs vehiclePrefs;
     private VehicleRepository vehicleRepository;
@@ -75,6 +74,8 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
     private CardView cardVehicleProfile;
     private TextView tvVehicleDashboardName, tvVehicleDashboardDetail, tvVehicleDashboardKpl, tvVehicleDashboardTrans;
     private ImageView ivVehicleIcon;
+    private Motorcycle currentVehicle;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private final ActivityResultLauncher<Intent> destinationLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -104,6 +105,7 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
         progressTime = findViewById(R.id.progressTime);
         ivProfile = findViewById(R.id.ivProfile);
         btnViewAllLogs = findViewById(R.id.btnViewAllLogs);
+        btnFuelRefill = findViewById(R.id.btnFuelRefill);
         fabAI = findViewById(R.id.fabAI);
         fragmentContainer = findViewById(R.id.fragmentContainer);
 
@@ -160,6 +162,7 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
         ivProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         cardVehicleProfile.setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         btnViewAllLogs.setOnClickListener(v -> startActivity(new Intent(this, LogsActivity.class)));
+        btnFuelRefill.setOnClickListener(v -> startActivity(new Intent(this, FuelRefillActivity.class)));
         fabAI.setOnClickListener(v -> startActivity(new Intent(this, AIChatActivity.class)));
 
         cardNavPopup.setOnClickListener(v -> {
@@ -290,7 +293,7 @@ public class DashboardActivity extends AppCompatActivity implements RoutesFragme
             tvVehicleDashboardDetail.setText(vehicle.getMake());
             tvVehicleDashboardKpl.setText(String.format(Locale.US, "%.1f km/L", vehicle.getKpl()));
             tvVehicleDashboardTrans.setText(vehicle.getTransmission() != null ? vehicle.getTransmission() : "Manual");
-            ivVehicleIcon.setImageResource(R.drawable.ic_car);
+            ivVehicleIcon.setImageResource(R.drawable.ic_road);
         } else {
             tvVehicleDashboardName.setText("No Vehicle Selected");
             tvVehicleDashboardDetail.setText("Tap to select in profile");

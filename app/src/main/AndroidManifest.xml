@@ -38,6 +38,7 @@
         <activity android:name=".ui.LogsActivity" />
         <activity android:name=".ui.DestinationActivity" />
         <activity android:name=".ui.NavigationActivity" />
+        <activity android:name=".ui.FuelRefillActivity" />
         <activity android:name=".ui.AIChatActivity"
             android:exported="false" />
 
